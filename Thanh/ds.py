@@ -1,14 +1,3 @@
-class Position:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        
-class Move:
-    def __init__(self, start, end):
-        self.start = start
-        self.end = end
-        
-
 flippable_positions =  (
                         ((), ((0,0), (0,2)), ((0,1), (0,3)), ((0,2), (0,4)), ()),
                         (((0,0), (2,0)), ((0,0), (2,2), (0,1), (2,1), (0,2), (2,0), (1,0), (1,2)), ((0,2), (2,2), (1,1), (1,3)), ((0,2), (2,4), (0,3), (2,3), (0,4), (2,2), (1,2), (1,4)), ((0,4), (2,4))),
@@ -25,7 +14,7 @@ reachable_positions =  (
                         ((), ((4,0), (4,2)), ((4,1), (4,3)), ((4,2), (4,4)), ())
                        )
 
-
+MAX_DEPTH = 3
 one = []
 minus_one = []
 player_pieces = {1: one, -1: minus_one}
