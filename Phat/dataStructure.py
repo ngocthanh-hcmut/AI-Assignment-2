@@ -1,3 +1,5 @@
+import copy
+
 testingBoard=[
     [1, 1, 1, 1, 1],
     [1, 0, 0, 0, 1],
@@ -63,6 +65,7 @@ MOVEGRAPH = [
 # =======================================
 
 
+
 def hang(pos):
     row = pos[0]
     if row < 0 or row > 4:
@@ -82,7 +85,12 @@ def vitri(board, pos):
         return None    
     return board[hang][cot]
 
-def kiemTraOTrong(board, pos):
+def setValAt(pos,value,broad):
+    h , c = pos
+    broad[h][c] = value
+    return broad
+
+def kiemTraOTrong(pos, board):
     return vitri(board, pos) == 0
 
 
@@ -95,11 +103,7 @@ def phamViDiChuyen(pos):
 
     
 
-
-def luatDiChuyen(oldPos, nextPos):
-    doDichChuyen = None
-
-def chonQuan(board, pos, player):
+def chonQuan(player,pos,board):
     return player == vitri(board, pos)
 
 
@@ -107,9 +111,15 @@ def chonQuan(board, pos, player):
     
          
 
-def kiemTraDiChuyenHopLe(board, move, player):
-    oldPos = move[0]
-    nextPos = move[1]
+def kiemTraDiChuyenHopLe(player,originPos,desPos, board):
+    if chonQuan(player,originPos,board):
+        if kiemTraOTrong(desPos, board):
+            if desPos in phamViDiChuyen(originPos):
+                return True
+            return False        
+        return False
+    return False
+
 
 
 def coTheGanh(board, move, player):
@@ -120,4 +130,38 @@ def coTheVay(board, move, player):
 
 def coTheMo(board, move, player):
     pass
+
+def flipAtomic(pos,board):
+    giatri = vitri(board,pos)
+    if giatri is None:
+        return None
+    setValAt(pos,-1*giatri,board)
+    return board
+    
+    
+def flip(flipPositions,board):
+    oldBoard = copy.deepcopy(board)
+    for pos in flipPositions:
+        flipAtomic(pos,board)
+    fliptedBoard = board
+    return [oldBoard, fliptedBoard]
+
+# print(testingBoard)
+# p = (0, 1)
+# setValAt(p, 8, testingBoard)
+# print(testingBoard)
+lst = [
+    (0,0),
+    (0,2),
+    (4,4),
+    (2,2),
+    (3,0)
+]
+
+print(testingBoard)
+oldb , newb=flip(lst,testingBoard)
+print(testingBoard)
+print(oldb)
+print(newb)
+
 
