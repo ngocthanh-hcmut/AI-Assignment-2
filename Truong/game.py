@@ -245,37 +245,40 @@ class Game:
                     return False
         return True
 
-    @staticmethod
-    def checkTrapMove(oldPosition, newPosition, newBoard, player):
-        if Game.getValue(newPosition, newBoard) == player: return False
-        possible = False
-        for position in Game.getSurroundPosition(oldPosition):
-            if Game.getValue(position, newBoard) == player:
-                possible = True
-                break
-
-        if Game.hasEnemyLeft(oldPosition, newBoard, player) and Game.hasEnemyRight(oldPosition, newBoard, player) and possible:
+    @staticmethod 
+    def isTrapMove(oldBoard, currentBoard):
+        oldPosition, newPosition = Game.findOldAndNewPosition(oldBoard, currentBoard)
+        player = Game.getValue(newPosition, currentBoard)
+        hasOpponentNearby = False
+        for pos in Game.getSurroundPosition(oldPosition):
+            if Game.getValue(pos, currentBoard) == player*-1:
+                hasOpponentNearby = True
+        if Game.hasEnemyLeft(oldPosition, currentBoard, player*-1) and Game.hasEnemyRight(oldPosition, currentBoard, player*-1) and hasOpponentNearby:
             return True
-        if Game.hasEnemyTop(oldPosition, newBoard, player) and Game.hasEnemyBottom(oldPosition, newBoard, player) and possible:
+        if Game.hasEnemyTop(oldPosition, currentBoard, player*-1) and Game.hasEnemyBottom(oldPosition, currentBoard, player*-1) and hasOpponentNearby:
+            print("alo")
             return True
-        if Game.hasEnemyTopLeft(oldPosition, newBoard, player) and Game.hasEnemyBotRight(oldPosition, newBoard, player) and possible:
+        if Game.hasEnemyBotLeft(oldPosition, currentBoard, player*-1) and Game.hasEnemyTopRight(oldPosition, currentBoard, player*-1) and hasOpponentNearby:
             return True
-        if Game.hasEnemyTopRight(oldPosition, newBoard, player) and Game.hasEnemyBotLeft(oldPosition, newBoard, player) and possible:
+        if Game.hasEnemyTopLeft(oldPosition, currentBoard, player*-1) and Game.hasEnemyBotRight(oldPosition, currentBoard, player*-1) and hasOpponentNearby:
             return True
+        
         return False
+        
+
 
     @staticmethod
-    def findOldAndNewPosition(oldBoard, newBoard):
+    def findOldAndNewPosition(oldBoard, currentBoard):
         oldPosition = None
         newPosition = None
         for i in range(5):
             for j in range(5):
-                if not Game.isEmpty((i,j), oldBoard) and Game.isEmpty((i,j), newBoard):
+                if not Game.isEmpty((i,j), oldBoard) and Game.isEmpty((i,j), currentBoard):
                     oldPosition = (i,j)
-                if Game.isEmpty((i,j), oldBoard) and not Game.isEmpty((i,j), newBoard):
+                if Game.isEmpty((i,j), oldBoard) and not Game.isEmpty((i,j), currentBoard):
                     newPosition = (i,j)
                 if oldPosition != None and newPosition != None:
-                    return (oldPosition, newPosition)
+                    return oldPosition, newPosition
 
     @staticmethod
     def count(player, board):

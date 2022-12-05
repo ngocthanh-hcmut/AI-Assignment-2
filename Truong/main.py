@@ -1,5 +1,6 @@
 from game import Game
 from colored import fg
+import copy
         
 game = Game()
 def char(i,j):
@@ -27,12 +28,14 @@ if __name__ == "__main__":
         print('4   '+char(4,0)+fg('yellow')+'---'+char(4,1)+fg('yellow')+'---'+char(4,2)+fg('yellow')+'---'+char(4,3)+fg('yellow')+'---'+char(4,4))
         
         
-        
         i, j, y, x = input(fg('white')+"Input move: ").split()
         i = int(i)
         j = int(j)
         x = int(x)
         y = int(y)
-
+        oldBoard = copy.deepcopy(game.board)
         game.move((i,j), (y,x))
+        currentBoard = copy.deepcopy(game.board)
+        if Game.isTrapMove(oldBoard, currentBoard):
+            print("trappppppppppppppppp")
 
