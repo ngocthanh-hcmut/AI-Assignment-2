@@ -1,9 +1,30 @@
 from dataStructure import *
+b = [
+    [ 1 , 0, 0 , 0 , 1 ],
+    [ 1 , 1 , 1 , 1 , 1 ],
+    [ 1 , 1 , 0 , 1 ,-1 ],
+    [-1 , 1 , 1 , 1 ,-1 ],
+    [-1 ,-1 ,-1 ,-1 ,-1 ]
+    ];
+
+p = (2,2)
+res = coTheGanh(AllPosNow.OPPONENT, p , b)
+print(res)
+
+# a = [()]
+# if a :
+#     print('hihihi')
+# else:
+#     print('leuleu')
 
 
-a = genMove(AllPosNow.OPPONENT,testingBoard)
-print(a)
+# a = genMove(AllPosNow.OPPONENT,testingBoard)
+# print(a)
 
+# p = ( 4 , 3)
+# print(
+#     giuaHangDoc(p)
+# )
 
 # a = [()]
 # if a :

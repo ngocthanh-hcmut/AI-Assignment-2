@@ -55,6 +55,14 @@ MOVEGRAPH = [
     HANG4
 ]
 
+DIEMDICHEO = [
+    (1,1),
+    (1,4),
+    (2,2),
+    (3,1),
+    (3,3)
+]
+
 class AllPosNow:
     PLAYER = 1
     OPPONENT = -1
@@ -123,6 +131,47 @@ def cot(pos):
     if col < 0 or col > 4:
         return None
     return col
+
+def len(pos):
+    if pos[0] <=0:
+        return None
+    return (pos[0]-1,pos[1])
+
+def xuong(pos):
+    if pos[0] >=4:
+        return None
+    return (pos[0]+1,pos[1])
+
+def trai(pos):
+    if pos[1] <=0:
+        return None    
+    return ( pos[0],pos[1]-1)
+
+def phai(pos):
+    if pos[1] >=4:
+        return None
+    return ( pos[0],pos[1]+1)
+
+
+def cheoLenTrai(pos):
+    if pos[0] <=0 or pos[1] <=0:
+        return None
+    return (pos[0]-1, pos[1]-1 ) 
+
+def cheoLenPhai(pos):
+    if pos[0] <= 0 or pos[1] >=4:
+        return None
+    return (pos[0]-1, pos[1]+1 ) 
+
+def cheoXuongTrai(pos):
+    if pos[0] >=4 or pos[1] <= 0:
+        return None
+    return (pos[0]+1, pos[1]-1 ) 
+
+def cheoXuongPhai(pos):
+    if pos[0] >= 4 or pos[1] >= 4:
+        return None
+    return (pos[0]+1, pos[1]+1 ) 
 
 def vitri(board, pos):
     hang = pos[0]
@@ -194,14 +243,101 @@ def genMove(player, board):
                 
         
     
+def giuaHangNgang(pos):
+    c = cot(pos)
+    return ( c > 0 and c < 4 )
 
-def coTheGanh(board, move, player):
+def giuaHangDoc(pos):
+    h = hang(pos)
+    return ( h > 0 and h < 4 )
+
+def giuaHangCheo(pos):
+    return pos in DIEMDICHEO
+    
+def coTheGanhNgang(player, pos, board):
+    ganh = []
+    if giuaHangNgang(pos):
+        t = trai(pos)
+        p = phai(pos)
+        vt = vitri(board,t)
+        vp = vitri(board,p)
+        if (vp != 0) and (vt == vp) and (vp == -1* player):
+            ganh.append(t)
+            ganh.append(p)
+    return ganh
+
+def coTheGanhDoc(player, pos, board):
+    ganh = []
+    if giuaHangDoc(pos):
+        t = len(pos)
+        d = xuong(pos)
+        vt = vitri(board,t)
+        vd = vitri(board,d)
+        if (vt != 0) and (vt == vd) and (vd == -1* player):
+            ganh.append(t)
+            ganh.append(d)
+    return ganh
+
+def coTheGanhCheoTrai(player, pos, board):
+    ganh = []
+    if giuaHangCheo(pos):
+        lt = cheoLenTrai(pos)
+        xp = cheoXuongPhai(pos)
+        vlt = vitri(board,lt)
+        vxp = vitri(board,xp)
+        if (vxp != 0) and (vlt == vxp) and (vxp == -1* player):
+            ganh.append(lt)
+            ganh.append(xp)
+    return ganh    
+    
+def coTheGanhCheoPhai(player, pos, board):
+    ganh = []
+    if giuaHangCheo(pos):
+        lp = cheoLenPhai(pos) 
+        xt = cheoXuongTrai(pos)
+        vlp = vitri(board,lp)
+        vxt = vitri(board,xt)
+        if (vlp != 0) and (vxt == vlp) and (vlp == -1* player):
+            ganh.append(lp)
+            ganh.append(xt)        
+    return ganh
+
+        
+
+def coTheGanh(player, pos, board):
+    danhSachGanh = []
+    
+    cheongang = coTheGanhNgang(player,pos,board)
+    if cheongang:
+        trai, phai = cheongang
+        danhSachGanh.append(trai)
+        danhSachGanh.append(phai)
+    
+    cheodoc = coTheGanhDoc(player, pos, board)
+    if cheodoc:
+        tren, duoi = cheodoc
+        danhSachGanh.append(tren)
+        danhSachGanh.append(duoi)
+        
+    cheoxientrai = coTheGanhCheoTrai(player, pos, board)
+    if cheoxientrai:
+        lentrai,xuongphai = cheoxientrai
+        danhSachGanh.append(lentrai)
+        danhSachGanh.append(xuongphai)
+        
+    cheoxienphai = coTheGanhCheoPhai(player, pos, board)
+    if cheoxienphai:
+        lenphai, xuongtrai = cheoxienphai
+        danhSachGanh.append(lenphai)
+        danhSachGanh.append(xuongtrai)
+         
+    return danhSachGanh
+    
+
+def coTheVay(player, move, board):
     pass
 
-def coTheVay(board, move, player):
-    pass
-
-def coTheMo(board, move, player):
+def coTheMo(player, move, board):
     pass
 
 
