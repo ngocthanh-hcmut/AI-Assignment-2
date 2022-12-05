@@ -148,14 +148,21 @@ def phamViDiChuyen(pos):
 def chonQuan(player,pos,board):
     return player == vitri(board, pos)
 
-def kiemTraDiChuyenHopLe(player,originPos,desPos, board):
-    if chonQuan(player,originPos,board):
-        if kiemTraOTrong(desPos, board):
-            if desPos in phamViDiChuyen(originPos):
-                return True
-            return False        
-        return False
-    return False
+# def kiemTraDiChuyenHopLe(player,originPos,desPos, board):
+#     if chonQuan(player,originPos,board):
+#         if kiemTraOTrong(desPos, board):
+#             if desPos in phamViDiChuyen(originPos):
+#                 return True
+#             return False        
+#         return False
+#     return False
+
+# def cotheden(originPos,desPos, board):
+#     if kiemTraOTrong(desPos, board):
+#         if desPos in phamViDiChuyen(originPos):
+#             return True
+#         return False        
+#     return False
 
 def flipAtomic(pos,board):
     giatri = vitri(board,pos)
@@ -172,8 +179,21 @@ def flip(flipPositions,board):
     fliptedBoard = board
     return [oldBoard, fliptedBoard]
 
-def genNextPos(player, allPos, board):
-    pass
+def genMove(player, board):
+    viTricacQuanCo = AllPosNow.getAllPos(player);
+    moveList = []    
+    if viTricacQuanCo:
+        for pos in viTricacQuanCo:
+            phamvi = phamViDiChuyen(pos)
+            for des in phamvi:
+                if kiemTraOTrong(des,board):
+                    move = (pos,des)
+                    moveList.append(move)        
+    return moveList
+                
+                
+        
+    
 
 def coTheGanh(board, move, player):
     pass

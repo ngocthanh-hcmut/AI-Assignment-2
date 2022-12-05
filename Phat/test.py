@@ -1,17 +1,31 @@
 from dataStructure import *
 
-all = AllPosNow()
+
+a = genMove(AllPosNow.OPPONENT,testingBoard)
+print(a)
+
+
+# a = [()]
+# if a :
+#     print('hihi')
+# else:
+#     print('hehehe');
+
+
+# from dataStructure import *
+
+# all = AllPosNow()
 
 
 
     
-o = (2,4)
-n = (0,'W')
-p = -1
+# o = (2,4)
+# n = (0,'W')
+# p = -1
 
-print(all.getAllPos(p))
-print (all.replace(o, n, p))
-print(all.getAllPos(p))
+# print(all.getAllPos(p))
+# print (all.replace(o, n, p))
+# print(all.getAllPos(p))
 
 # print(
 #     all.replacePosition(
