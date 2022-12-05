@@ -1,4 +1,5 @@
 from ds import *
+from copy import *
 
 
 def move(prev_board, board, player, remain_time_x, remain_time_o): pass
@@ -13,6 +14,7 @@ def flip(board, dest, player): # ganh
         y1 = positions[i][1]
         x2 = positions[i+1][0]
         y2 = positions[i+1][1]
+        
         if (board[x1][y1] == -player and board[x2][y2] == -player):
             player_pieces[player].add(positions[i])
             player_pieces[player].add(positions[i+1])
@@ -57,7 +59,9 @@ def capture(board, player): # vay
 
 # A move is called a trap when it: 1) Don't flip any opponent pieces and 2) Create a flippable position for opponent. When a trap is made, you must go into it.
 def check_trap(prev_board, board, player): # bay
-    return [] 
+    # forced_moves = []
+    # pieces = player_pieces[player]
+    return []
 
 
 
@@ -79,13 +83,33 @@ def get_valid_moves(prev_board, board, player):
 
 def act_move(board, move, player):
     board[move[0][0]][move[0][1]] = 0
-
+    board[move[1][0]][move[1][1]] = player
+    
     flip(board, move[1], player)
     capture(board, -player)
 
 
 
-def minimax(): pass
+def minimax(prev_board, board, player, depth):
+    if depth == MAX_DEPTH:
+        return evaluate(player)
+    
+    successors = get_valid_moves(prev_board, board, player)
+    
+    if not successors:
+        return evaluate(player)
+    
+    best_score = -9
+    for succ in successors:
+        result = minimax(prev_board, board, -player, depth + 1)
+        new_value = -result[0]
+        if new_value > best_score:
+            best_score = new_value
+            best_move = succ
+    
+    return (best_score, best_move)
+            
+        
 
 
 
