@@ -1,16 +1,79 @@
 from dataStructure import *
 b = [
-    [ 1 , 0, 0 , 0 , 1 ],
     [ 1 , 1 , 1 , 1 , 1 ],
-    [ 1 , 1 , 0 , 1 ,-1 ],
-    [-1 , 1 , 1 , 1 ,-1 ],
+    [ 1 , 0 , 0 , 0 , 1 ],
+    [ 1 , 0 , 0 , 0 ,-1 ],
+    [-1 , 0 , 0 , 0 ,-1 ],
     [-1 ,-1 ,-1 ,-1 ,-1 ]
     ];
 
-p = (2,2)
-res = coTheGanh(AllPosNow.OPPONENT, p , b)
-print(res)
+br = BoardManager(b)
+# print(br.board)
+# print(br.PLAYER)
+# print(br.OPPONENT)
+# print(br.PLAYER_POS)
+# print(br.getAllPos(br.PLAYER))
+# print(br.OPPONENT_POS)
+# print(br.getAllPos(br.OPPONENT))
+# o = (1,0)
+# n = (2,1)
+# print(br.getAllPos(br.PLAYER))
+# print(br.replace_in_POS(o, n, br.PLAYER))
+# print(br.getAllPos(br.PLAYER))
 
+# for i in range(0,5):
+    # print(i)
+
+# class A:
+#     def c(self):
+#         a()
+    
+
+# def a():
+#     print('ahihi')
+    
+# b = A()
+# b.c()
+
+
+
+# o = (4,0)
+# o = (0,0)
+# n = (4,0)
+# print(
+#     kiemTraDiChuyenHopLe(AllPosNow.PLAYER,
+#         o,
+#         n,
+#         b
+#     )
+# )
+# print(vitri(b,o))
+
+# print(
+#     AllPosNow.PLAYER_POS
+# )
+
+# a = AllPosNow.replace(
+#     (0,0),(1,1),AllPosNow.PLAYER
+# )
+
+# print(
+#     AllPosNow.PLAYER_POS
+# )
+
+# print(a)
+
+# p = (4,2)
+# notinlist = [
+#     (4,1),(3,2),(5,5),(4,3)
+# ]
+# print(
+#     nodeLancanCungmau(p,b,notinlist)
+# )
+
+# p = (2,2)
+# res = coTheGanh(AllPosNow.OPPONENT, p , b)
+# print(res)
 # a = [()]
 # if a :
 #     print('hihihi')

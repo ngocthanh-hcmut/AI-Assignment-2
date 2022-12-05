@@ -63,56 +63,99 @@ DIEMDICHEO = [
     (3,3)
 ]
 
-class AllPosNow:
+class BoardManager:
     PLAYER = 1
     OPPONENT = -1
-    PLAYER_POS = [
-        (0,0),
-        (0,1),
-        (0,2),
-        (0,3),
-        (0,4),
-        (1,4),
-        (1,0),
-        (2,0)
-    ]
-    OPPONENT_POS = [
-        (4,0),
-        (4,1),
-        (4,2),
-        (4,3),
-        (4,4),
-        (3,4),
-        (2,4),
-        (3,0)
-    ]
+    def __init__(self, initBoard):
+        self.board = initBoard
+        self.PLAYER_POS = []
+        self.OPPONENT_POS = []
+        self.initProcess()
     
-    @staticmethod
-    def getAllPos(player):
-        if player == AllPosNow.PLAYER:
-            return AllPosNow.PLAYER_POS
-        elif player == AllPosNow.OPPONENT:
-            return AllPosNow.OPPONENT_POS
+    def initProcess(self):
+        for h in range(0,5):
+            for c in range(0,5):
+                pos = (h,c)
+                if vitri(self.board, pos) == BoardManager.PLAYER:
+                    self.PLAYER_POS.append(pos)
+                elif vitri(self.board, pos) == BoardManager.OPPONENT:
+                    self.OPPONENT_POS.append(pos)
+                
+    def getAllPos(self,player):
+        if player == BoardManager.PLAYER:
+            return self.PLAYER_POS
+        elif player == BoardManager.OPPONENT:
+            return self.OPPONENT_POS
         else:
             return []
         
-    @staticmethod
-    def replacePosition(oldPos, newPos, listPositions):
-        if oldPos in listPositions:
+    def replacePosition_in_POS(self, oldPos, newPos, listPositions):
+        if (oldPos in listPositions) and (newPos not in listPositions):
             index = listPositions.index(oldPos)
             listPositions.remove(oldPos)
             listPositions.insert(index, newPos)
             return True
-        return False 
-        
-    @staticmethod
-    def replace(oldPos, newPos, player):
-        if player == AllPosNow.PLAYER:
-            return AllPosNow.replacePosition(oldPos, newPos, AllPosNow.PLAYER_POS)
-        elif player == AllPosNow.OPPONENT:
-            return AllPosNow.replacePosition(oldPos, newPos, AllPosNow.OPPONENT_POS)
+        return False             
+    
+    def replace_in_POS(self, oldPos, newPos, player):
+        if player == BoardManager.PLAYER:
+            return self.replacePosition_in_POS(oldPos, newPos, self.PLAYER_POS)
+        elif player == BoardManager.OPPONENT:
+            return self.replacePosition_in_POS(oldPos, newPos, self.OPPONENT_POS)
         else:
             return False
+
+
+# class ABCD_EFG:
+#     PLAYER = 1
+#     OPPONENT = -1
+#     PLAYER_POS = [
+#         (0,0),
+#         (0,1),
+#         (0,2),
+#         (0,3),
+#         (0,4),
+#         (1,4),
+#         (1,0),
+#         (2,0)
+#     ]
+#     OPPONENT_POS = [
+#         (4,0),
+#         (4,1),
+#         (4,2),
+#         (4,3),
+#         (4,4),
+#         (3,4),
+#         (2,4),
+#         (3,0)
+#     ]
+    
+#     @staticmethod
+#     def getAllPos(player):
+#         if player == ABCD_EFG.PLAYER:
+#             return ABCD_EFG.PLAYER_POS
+#         elif player == ABCD_EFG.OPPONENT:
+#             return ABCD_EFG.OPPONENT_POS
+#         else:
+#             return []
+        
+#     @staticmethod
+#     def replacePosition(oldPos, newPos, listPositions):
+#         if oldPos in listPositions:
+#             index = listPositions.index(oldPos)
+#             listPositions.remove(oldPos)
+#             listPositions.insert(index, newPos)
+#             return True
+#         return False 
+        
+#     @staticmethod
+#     def replace(oldPos, newPos, player):
+#         if player == ABCD_EFG.PLAYER:
+#             return ABCD_EFG.replacePosition(oldPos, newPos, ABCD_EFG.PLAYER_POS)
+#         elif player == ABCD_EFG.OPPONENT:
+#             return ABCD_EFG.replacePosition(oldPos, newPos, ABCD_EFG.OPPONENT_POS)
+#         else:
+#             return False
 
 
 
@@ -197,14 +240,14 @@ def phamViDiChuyen(pos):
 def chonQuan(player,pos,board):
     return player == vitri(board, pos)
 
-# def kiemTraDiChuyenHopLe(player,originPos,desPos, board):
-#     if chonQuan(player,originPos,board):
-#         if kiemTraOTrong(desPos, board):
-#             if desPos in phamViDiChuyen(originPos):
-#                 return True
-#             return False        
-#         return False
-#     return False
+def kiemTraDiChuyenHopLe(player,originPos,desPos, board):
+    if chonQuan(player,originPos,board):
+        if kiemTraOTrong(desPos, board):
+            if desPos in phamViDiChuyen(originPos):
+                return True
+            return False        
+        return False
+    return False
 
 # def cotheden(originPos,desPos, board):
 #     if kiemTraOTrong(desPos, board):
@@ -228,17 +271,17 @@ def flip(flipPositions,board):
     fliptedBoard = board
     return [oldBoard, fliptedBoard]
 
-def genMove(player, board):
-    viTricacQuanCo = AllPosNow.getAllPos(player);
-    moveList = []    
-    if viTricacQuanCo:
-        for pos in viTricacQuanCo:
-            phamvi = phamViDiChuyen(pos)
-            for des in phamvi:
-                if kiemTraOTrong(des,board):
-                    move = (pos,des)
-                    moveList.append(move)        
-    return moveList
+# def genMove(player, board):
+#     viTricacQuanCo = ABCD_EFG.getAllPos(player);
+#     moveList = []    
+#     if viTricacQuanCo:
+#         for pos in viTricacQuanCo:
+#             phamvi = phamViDiChuyen(pos)
+#             for des in phamvi:
+#                 if kiemTraOTrong(des,board):
+#                     move = (pos,des)
+#                     moveList.append(move)        
+#     return moveList
                 
                 
         
@@ -304,35 +347,56 @@ def coTheGanhCheoPhai(player, pos, board):
 
         
 
-def coTheGanh(player, pos, board):
+def coTheGanh(player, putpos, board):
     danhSachGanh = []
     
-    cheongang = coTheGanhNgang(player,pos,board)
+    cheongang = coTheGanhNgang(player,putpos,board)
     if cheongang:
         trai, phai = cheongang
         danhSachGanh.append(trai)
         danhSachGanh.append(phai)
     
-    cheodoc = coTheGanhDoc(player, pos, board)
+    cheodoc = coTheGanhDoc(player, putpos, board)
     if cheodoc:
         tren, duoi = cheodoc
         danhSachGanh.append(tren)
         danhSachGanh.append(duoi)
         
-    cheoxientrai = coTheGanhCheoTrai(player, pos, board)
+    cheoxientrai = coTheGanhCheoTrai(player, putpos, board)
     if cheoxientrai:
         lentrai,xuongphai = cheoxientrai
         danhSachGanh.append(lentrai)
         danhSachGanh.append(xuongphai)
         
-    cheoxienphai = coTheGanhCheoPhai(player, pos, board)
+    cheoxienphai = coTheGanhCheoPhai(player, putpos, board)
     if cheoxienphai:
         lenphai, xuongtrai = cheoxienphai
         danhSachGanh.append(lenphai)
         danhSachGanh.append(xuongtrai)
          
     return danhSachGanh
-    
+
+
+def coDuongDiAt(pos,board):
+    phamvi = phamViDiChuyen(pos)
+    for p in phamvi:
+        if kiemTraOTrong(p, board):
+            return True
+    return False
+
+def nodeLancanCungmau(pos, board, notInList = []):
+    if kiemTraOTrong(pos,board):
+        return []
+    valpos = vitri(board, pos)
+    phamvi = phamViDiChuyen(pos)
+    nodelancangiong = []
+    for p in phamvi:
+        if (p not in notInList ) and  (vitri(board, p) == valpos):
+            nodelancangiong.append(p)
+    return nodelancangiong
+            
+            
+            
 
 def coTheVay(player, move, board):
     pass
