@@ -55,10 +55,56 @@ MOVEGRAPH = [
     HANG4
 ]
 
-
-
-
-
+class AllPosNow:
+    PLAYER = 1
+    OPPONENT = -1
+    PLAYER_POS = [
+        (0,0),
+        (0,1),
+        (0,2),
+        (0,3),
+        (0,4),
+        (1,4),
+        (1,0),
+        (2,0)
+    ]
+    OPPONENT_POS = [
+        (4,0),
+        (4,1),
+        (4,2),
+        (4,3),
+        (4,4),
+        (3,4),
+        (2,4),
+        (3,0)
+    ]
+    
+    @staticmethod
+    def getAllPos(player):
+        if player == AllPosNow.PLAYER:
+            return AllPosNow.PLAYER_POS
+        elif player == AllPosNow.OPPONENT:
+            return AllPosNow.OPPONENT_POS
+        else:
+            return []
+        
+    @staticmethod
+    def replacePosition(oldPos, newPos, listPositions):
+        if oldPos in listPositions:
+            index = listPositions.index(oldPos)
+            listPositions.remove(oldPos)
+            listPositions.insert(index, newPos)
+            return True
+        return False 
+        
+    @staticmethod
+    def replace(oldPos, newPos, player):
+        if player == AllPosNow.PLAYER:
+            return AllPosNow.replacePosition(oldPos, newPos, AllPosNow.PLAYER_POS)
+        elif player == AllPosNow.OPPONENT:
+            return AllPosNow.replacePosition(oldPos, newPos, AllPosNow.OPPONENT_POS)
+        else:
+            return False
 
 
 
@@ -93,23 +139,14 @@ def setValAt(pos,value,broad):
 def kiemTraOTrong(pos, board):
     return vitri(board, pos) == 0
 
-
 def phamViDiChuyen(pos):
     hang, cot = pos
     if (hang < 0) or (cot < 0) or (hang > 4) or (cot > 4):
         return []
     return MOVEGRAPH[hang][cot]
 
-
-    
-
 def chonQuan(player,pos,board):
     return player == vitri(board, pos)
-
-
-    
-    
-         
 
 def kiemTraDiChuyenHopLe(player,originPos,desPos, board):
     if chonQuan(player,originPos,board):
@@ -119,17 +156,6 @@ def kiemTraDiChuyenHopLe(player,originPos,desPos, board):
             return False        
         return False
     return False
-
-
-
-def coTheGanh(board, move, player):
-    pass
-
-def coTheVay(board, move, player):
-    pass
-
-def coTheMo(board, move, player):
-    pass
 
 def flipAtomic(pos,board):
     giatri = vitri(board,pos)
@@ -146,22 +172,36 @@ def flip(flipPositions,board):
     fliptedBoard = board
     return [oldBoard, fliptedBoard]
 
+def genNextPos(player, allPos, board):
+    pass
+
+def coTheGanh(board, move, player):
+    pass
+
+def coTheVay(board, move, player):
+    pass
+
+def coTheMo(board, move, player):
+    pass
+
+
+
 # print(testingBoard)
 # p = (0, 1)
 # setValAt(p, 8, testingBoard)
 # print(testingBoard)
-lst = [
-    (0,0),
-    (0,2),
-    (4,4),
-    (2,2),
-    (3,0)
-]
+# lst = [
+#     (0,0),
+#     (0,2),
+#     (4,4),
+#     (2,2),
+#     (3,0)
+# ]
 
-print(testingBoard)
-oldb , newb=flip(lst,testingBoard)
-print(testingBoard)
-print(oldb)
-print(newb)
+# print(testingBoard)
+# oldb , newb=flip(lst,testingBoard)
+# print(testingBoard)
+# print(oldb)
+# print(newb)
 
 
