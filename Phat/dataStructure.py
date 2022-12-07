@@ -1,11 +1,14 @@
 import copy
+import queue
+
 
 testingBoard=[
-    [ 1 , 1 , 1 , 1 , 1 ],
-    [ 1 , 0 , 0 , 0 , 1 ],
-    [ 1 , 0 , 0 , 0 ,-1 ],
-    [-1 , 0 , 0 , 0 ,-1 ],
-    [-1 ,-1 ,-1 ,-1 ,-1 ]
+    # 0   1   2   3   4
+    [ 1 , 1 , 1 , 1 , 1 ],  # 0
+    [ 1 , 0 , 0 , 0 , 1 ],  # 1
+    [ 1 , 0 , 0 , 0 ,-1 ],  # 2
+    [-1 , 0 , 0 , 0 ,-1 ],  # 3
+    [-1 ,-1 ,-1 ,-1 ,-1 ]   # 4
     ];
 
 
@@ -175,22 +178,22 @@ def cot(pos):
         return None
     return col
 
-def len(pos):
+def dilen(pos):
     if pos[0] <=0:
         return None
     return (pos[0]-1,pos[1])
 
-def xuong(pos):
+def dixuong(pos):
     if pos[0] >=4:
         return None
     return (pos[0]+1,pos[1])
 
-def trai(pos):
+def sangtrai(pos):
     if pos[1] <=0:
         return None    
     return ( pos[0],pos[1]-1)
 
-def phai(pos):
+def sangphai(pos):
     if pos[1] >=4:
         return None
     return ( pos[0],pos[1]+1)
@@ -282,6 +285,19 @@ def flip(flipPositions,board):
 #                     move = (pos,des)
 #                     moveList.append(move)        
 #     return moveList
+
+
+# def genMove(player, board):
+#     viTricacQuanCo = ABCD_EFG.getAllPos(player);
+#     moveList = []    
+#     if viTricacQuanCo:
+#         for pos in viTricacQuanCo:
+#             phamvi = phamViDiChuyen(pos)
+#             for des in phamvi:
+#                 if kiemTraOTrong(des,board):
+#                     move = (pos,des)
+#                     moveList.append(move)        
+#     return moveList
                 
                 
         
@@ -300,8 +316,8 @@ def giuaHangCheo(pos):
 def coTheGanhNgang(player, pos, board):
     ganh = []
     if giuaHangNgang(pos):
-        t = trai(pos)
-        p = phai(pos)
+        t = sangtrai(pos)
+        p = sangphai(pos)
         vt = vitri(board,t)
         vp = vitri(board,p)
         if (vp != 0) and (vt == vp) and (vp == -1* player):
@@ -312,8 +328,8 @@ def coTheGanhNgang(player, pos, board):
 def coTheGanhDoc(player, pos, board):
     ganh = []
     if giuaHangDoc(pos):
-        t = len(pos)
-        d = xuong(pos)
+        t = dilen(pos)
+        d = dixuong(pos)
         vt = vitri(board,t)
         vd = vitri(board,d)
         if (vt != 0) and (vt == vd) and (vd == -1* player):
@@ -377,29 +393,81 @@ def coTheGanh(player, putpos, board):
     return danhSachGanh
 
 
-def coDuongDiAt(pos,board):
+def lanCanCoOtrong(pos,board):
     phamvi = phamViDiChuyen(pos)
     for p in phamvi:
         if kiemTraOTrong(p, board):
             return True
     return False
 
-def nodeLancanCungmau(pos, board, notInList = []):
+def nodeLanCanCungMau(pos, board, notInList = []):
     if kiemTraOTrong(pos,board):
         return []
     valpos = vitri(board, pos)
     phamvi = phamViDiChuyen(pos)
-    nodelancangiong = []
+    nodelancan = []
     for p in phamvi:
         if (p not in notInList ) and  (vitri(board, p) == valpos):
-            nodelancangiong.append(p)
-    return nodelancangiong
+            nodelancan.append(p)
+    return nodelancan
+
+def nodeLanCanNguocMau(pos, board):
+    valpos = vitri(board, pos)
+    if valpos == BoardManager.PLAYER or valpos == BoardManager.OPPONENT:
+        phamvi = phamViDiChuyen(pos)
+        poslistsurround = []
+        for p in phamvi:
+            if vitri(board, p) == -1* valpos:
+                poslistsurround.append(p)
+        return poslistsurround    
+    return []
+
             
             
-            
+def dichuyen(player,oldpos, despos,board):    
+    if kiemTraDiChuyenHopLe(player, oldpos, despos, board):
+        newboard = copy.deepcopy(board)
+        setValAt(oldpos, 0, newboard)
+        setValAt(despos, player, newboard)
+        return[newboard, board]        
+    else:
+        return [None,board]
+
+def getSameColorGrap(pos,board):
+    genlist = []
+    genlist.append(pos)
+    que = queue.Queue()
+    que.put(pos)
+    while(not que.empty()):
+        now = que.get()
+        children = nodeLanCanCungMau(now,board,genlist)
+        genlist = genlist + children
+        [que.put(child) for child in children]
+    return genlist
+        
+        
+        
+    
+def bivay(pos,board):
+    if kiemTraOTrong(pos,board):
+        return [False,None]
+    nhomcungmau = getSameColorGrap(pos,board)
+    for p in nhomcungmau:
+        if lanCanCoOtrong(p,board):
+            return [False,nhomcungmau]
+    return [True,nhomcungmau]
+
 
 def coTheVay(player, move, board):
-    pass
+    []
+    oldpos,despos = move
+    newboard, oldBoard = dichuyen(player,oldpos,despos,board)
+    if newboard:
+        vay,danhsach = bivay(despos,newboard)
+        return danhsach if vay else []
+    return []
+    
+
 
 def coTheMo(player, move, board):
     pass
