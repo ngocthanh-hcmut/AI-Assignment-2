@@ -1,9 +1,11 @@
 from exception import *
+import copy
+from colored import fg
 
 class Game:
 
-    def __init__(self, board = [[1,1,1,1,1],[1,0,0,0,1],[1,0,0,0,-1],[-1,0,0,0,-1],[-1,-1,-1,-1,-1]]) -> None:
-        self.board = board
+    def __init__(self) -> None:
+        pass
     
     @staticmethod
     def isEmpty(position, board):
@@ -21,17 +23,21 @@ class Game:
     def getValue(position, board):
         return board[position[0]][position[1]]
 
-    def clearPosition(self, position):
-        if Game.isEmpty(position, self.board):
+    @staticmethod
+    def clearPosition(position, board):
+        if Game.isEmpty(position, board):
             raise PositionEmpty
 
-        self.board[position[0]][position[1]] = 0
+        board[position[0]][position[1]] = 0
+        return board
 
-    def insertChess(self, position, value):
-        if not Game.isEmpty(position, self.board):
+    @staticmethod
+    def insertChess(position, value, board):
+        if not Game.isEmpty(position, board):
             raise PositionNotEmpty
 
-        self.board[position[0]][position[1]] = value
+        board[position[0]][position[1]] = value
+        return board
 
     @staticmethod
     def hasRightPath(position):
@@ -93,10 +99,12 @@ class Game:
             return False
         return board[position1[0]][position1[1]] != board[position2[0]][position2[1]]
 
-    def flipChess(self, position):
-        if Game.isEmpty(position, self.board):
+    @staticmethod
+    def flipChess(position, board):
+        if Game.isEmpty(position, board):
             raise PositionEmpty
-        self.board[position[0]][position[1]] *= -1
+        board[position[0]][position[1]] *= -1
+        return board
 
     @staticmethod
     def hasEnemyLeft(position, board, player):
@@ -115,42 +123,42 @@ class Game:
     @staticmethod
     def hasEnemyTop(position, board, player):
         if not Game.hasTopPath(position): return False
-        if Game.isEmpty(position, board): return False
+        # if Game.isEmpty(position, board): return False
         topPosition = Game.getTopPosition(position)
         return Game.isEnemy(topPosition, player, board)
 
     @staticmethod
     def hasEnemyBottom(position, board, player):
         if not Game.hasBottomPath(position): return False
-        if Game.isEmpty(position, board): return False
+        # if Game.isEmpty(position, board): return False
         bottomPosition = Game.getBotPosition(position)
         return Game.isEnemy(bottomPosition, player, board)
 
     @staticmethod
     def hasEnemyTopLeft(position, board, player):
         if not Game.hasTopLeftPath(position): return False
-        if Game.isEmpty(position, board): return False
+        # if Game.isEmpty(position, board): return False
         topLeftPosition = Game.getTopLeftPosition(position)
         return Game.isEnemy(topLeftPosition, player, board)
 
     @staticmethod
     def hasEnemyTopRight(position, board, player):
         if not Game.hasTopRightPath(position): return False
-        if Game.isEmpty(position, board): return False
+        # if Game.isEmpty(position, board): return False
         topRightPosition = Game.getTopRightPosition(position)
         return Game.isEnemy(topRightPosition, player, board)
 
     @staticmethod
     def hasEnemyBotLeft(position, board, player):
         if not Game.hasBottomLeftPath(position): return False
-        if Game.isEmpty(position, board): return False
+        # if Game.isEmpty(position, board): return False
         botLeftPosition = Game.getBotLeftPositon(position)
         return Game.isEnemy(botLeftPosition, player, board)
 
     @staticmethod
     def hasEnemyBotRight(position, board, player):
         if not Game.hasBottomRightPath(position): return False
-        if Game.isEmpty(position, board): return False
+        # if Game.isEmpty(position, board): return False
         botRightPosition = Game.getBotRightPosition(position)
         return Game.isEnemy(botRightPosition, player, board)
 
@@ -186,32 +194,37 @@ class Game:
     def getBotRightPosition(position):
         return (position[0]+1, position[1]+1)
     
-    def move(self, fromPos, toPos):
-        player = Game.getValue(fromPos, self.board)
-        self.clearPosition(fromPos)
-        self.insertChess(toPos, player)
-        self.checkMove(toPos, player)
-        return Game.count(player, self.board)
+    @staticmethod
+    def move(fromPos, toPos, board):
+        player = Game.getValue(fromPos, board)
+        board = copy.deepcopy(board)
+        newBoard = Game.clearPosition(fromPos, board)
+        newBoard = Game.insertChess(toPos, player, newBoard)
+        newBoard = Game.checkMove(toPos, player, newBoard)
+        return newBoard
         
-    def checkMove(self, newPos, player):
-        if Game.hasEnemyLeft(newPos, self.board, player) and Game.hasEnemyRight(newPos, self.board, player):
-            self.flipChess(Game.getLeftPosition(newPos))
-            self.flipChess(Game.getRightPosition(newPos))
-        if Game.hasEnemyTop(newPos, self.board, player) and Game.hasEnemyBottom(newPos, self.board, player):
-            self.flipChess(Game.getTopPosition(newPos))
-            self.flipChess(Game.getBotPosition(newPos))
-        if Game.hasEnemyTopLeft(newPos, self.board, player) and Game.hasEnemyBotRight(newPos, self.board, player):
-            self.flipChess(Game.getTopLeftPosition(newPos))
-            self.flipChess(Game.getBotRightPosition(newPos))
-        if Game.hasEnemyTopRight(newPos, self.board, player) and Game.hasEnemyBotLeft(newPos, self.board, player):
-            self.flipChess(Game.getTopRightPosition(newPos))
-            self.flipChess(Game.getBotLeftPositon(newPos))
+    @staticmethod
+    def checkMove(newPos, player, board):
+        newBoard = board
+        if Game.hasEnemyLeft(newPos, newBoard, player) and Game.hasEnemyRight(newPos, newBoard, player):
+            newBoard = Game.flipChess(Game.getLeftPosition(newPos), newBoard)
+            newBoard = Game.flipChess(Game.getRightPosition(newPos), newBoard)
+        if Game.hasEnemyTop(newPos, newBoard, player) and Game.hasEnemyBottom(newPos, newBoard, player):
+            newBoard = Game.flipChess(Game.getTopPosition(newPos), newBoard)
+            newBoard = Game.flipChess(Game.getBotPosition(newPos), newBoard)
+        if Game.hasEnemyTopLeft(newPos, newBoard, player) and Game.hasEnemyBotRight(newPos, newBoard, player):
+            newBoard = Game.flipChess(Game.getTopLeftPosition(newPos), newBoard)
+            newBoard = Game.flipChess(Game.getBotRightPosition(newPos), newBoard)
+        if Game.hasEnemyTopRight(newPos, newBoard, player) and Game.hasEnemyBotLeft(newPos, newBoard, player):
+            newBoard = Game.flipChess(Game.getTopRightPosition(newPos), newBoard)
+            newBoard = Game.flipChess(Game.getBotLeftPositon(newPos), newBoard)
         
         for i in range(5):
             for j in range(5):
-                if Game.isEnemy2((i,j), newPos, self.board):
-                    if Game.isLockedChess((i,j), self.board, []):
-                        self.flipChess((i,j))
+                if Game.isEnemy2((i,j), newPos, newBoard):
+                    if Game.isLockedChess((i,j), newBoard, []):
+                        newBoard = Game.flipChess((i,j), newBoard)
+        return newBoard
 
     @staticmethod
     def getSurroundPosition(position):
@@ -247,6 +260,8 @@ class Game:
 
     @staticmethod 
     def isTrapMove(oldBoard, currentBoard):
+        if oldBoard == None:
+            return False
         oldPosition, newPosition = Game.findOldAndNewPosition(oldBoard, currentBoard)
         player = Game.getValue(newPosition, currentBoard)
         hasOpponentNearby = False
@@ -254,14 +269,17 @@ class Game:
             if Game.getValue(pos, currentBoard) == player*-1:
                 hasOpponentNearby = True
         if Game.hasEnemyLeft(oldPosition, currentBoard, player*-1) and Game.hasEnemyRight(oldPosition, currentBoard, player*-1) and hasOpponentNearby:
-            return True
+            # print("trap detected")
+            return oldPosition
         if Game.hasEnemyTop(oldPosition, currentBoard, player*-1) and Game.hasEnemyBottom(oldPosition, currentBoard, player*-1) and hasOpponentNearby:
-            print("alo")
-            return True
+            # print("trap detected")
+            return oldPosition
         if Game.hasEnemyBotLeft(oldPosition, currentBoard, player*-1) and Game.hasEnemyTopRight(oldPosition, currentBoard, player*-1) and hasOpponentNearby:
-            return True
+            # print("trap detected")
+            return oldPosition
         if Game.hasEnemyTopLeft(oldPosition, currentBoard, player*-1) and Game.hasEnemyBotRight(oldPosition, currentBoard, player*-1) and hasOpponentNearby:
-            return True
+            # print("trap detected")
+            return oldPosition
         
         return False
         
@@ -288,3 +306,32 @@ class Game:
                 if board[i][j] == player:
                     count += 1
         return count
+
+    @staticmethod
+    def getPlayerPosition(player, board):
+        result = []
+        for i in range(5):
+            for j in range(5):
+                if board[i][j] == player:
+                    result.append((i,j))
+        return result
+
+    @staticmethod
+    def print(board):
+        print('')
+        print('    0   1   2   3   4')
+        print('')
+        print('0   ' +Game.char(0,0, board)+fg('yellow')+'---'+Game.char(0,1, board)+fg('yellow')+'---'+Game.char(0,2, board)+fg('yellow')+'---'+Game.char(0,3, board)+fg('yellow')+'---'+Game.char(0,4, board))
+        print('    '+fg('yellow')+'| \ | / | \ | / |')
+        print('1   '+Game.char(1,0, board)+fg('yellow')+'---'+Game.char(1,1, board)+fg('yellow')+'---'+Game.char(1,2, board)+fg('yellow')+'---'+Game.char(1,3, board)+fg('yellow')+'---'+Game.char(1,4, board))
+        print('    '+fg('yellow')+'| / | \ | / | \ |')
+        print('2   '+Game.char(2,0, board)+fg('yellow')+'---'+Game.char(2,1, board)+fg('yellow')+'---'+Game.char(2,2, board)+fg('yellow')+'---'+Game.char(2,3, board)+fg('yellow')+'---'+Game.char(2,4, board))
+        print('    '+fg('yellow')+'| \ | / | \ | / |')
+        print('3   '+Game.char(3,0, board)+fg('yellow')+'---'+Game.char(3,1, board)+fg('yellow')+'---'+Game.char(3,2, board)+fg('yellow')+'---'+Game.char(3,3, board)+fg('yellow')+'---'+Game.char(3,4, board))
+        print('    '+fg('yellow')+'| / | \ | / | \ |')
+        print('4   '+Game.char(4,0, board)+fg('yellow')+'---'+Game.char(4,1, board)+fg('yellow')+'---'+Game.char(4,2, board)+fg('yellow')+'---'+Game.char(4,3, board)+fg('yellow')+'---'+Game.char(4,4, board))
+        print(fg('white')+'')
+        
+    @staticmethod
+    def char(i,j, board):
+        return fg('red')+'X' if board[i][j] == 1 else fg('blue')+'O' if board[i][j] == -1 else fg('yellow')+'+'
