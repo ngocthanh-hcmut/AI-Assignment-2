@@ -433,7 +433,7 @@ def dichuyen(player,oldpos, despos,board):
     else:
         return [None,board]
 
-def getSameColorGrap(pos,board):
+def getSameColorGraph(pos,board):
     genlist = []
     genlist.append(pos)
     que = queue.Queue()
@@ -445,26 +445,42 @@ def getSameColorGrap(pos,board):
         [que.put(child) for child in children]
     return genlist
         
+
+def noikhongtrung(list1,list2):
+    res = []
+    [res.append(x) for x in list2 if x not in list1]
+    res = list1 + res
+    return res
         
-        
-    
-def bivay(pos,board):
+def kiemtrabivaytatca(pos,board):
+    """return [bi vay, danhsachvay, danhsachkhongbivay]"""
     if kiemTraOTrong(pos,board):
-        return [False,None]
-    nhomcungmau = getSameColorGrap(pos,board)
+        return [False,None,None]
+    nhomcungmau = getSameColorGraph(pos,board)
     for p in nhomcungmau:
         if lanCanCoOtrong(p,board):
-            return [False,nhomcungmau]
-    return [True,nhomcungmau]
+            return [False,[],nhomcungmau]
+    return [True,nhomcungmau,[]]
 
 
-def coTheVay(player, move, board):
-    []
+def coTheVay(player, move, board):    
     oldpos,despos = move
     newboard, oldBoard = dichuyen(player,oldpos,despos,board)
     if newboard:
-        vay,danhsach = bivay(despos,newboard)
-        return danhsach if vay else []
+        danhsachkiemtra = nodeLanCanNguocMau(despos,newboard)
+        danhsachvay = []
+        danhsachkhongvay = []
+        for node in danhsachkiemtra:
+            if node in danhsachvay:
+                continue
+            if node in danhsachkhongvay:
+                continue
+            vay,dsvay,dskhongvay = kiemtrabivaytatca(node,newboard)
+            if vay:
+                danhsachvay = noikhongtrung(danhsachvay,dsvay)
+            else:
+                danhsachkhongvay = noikhongtrung(danhsachkhongvay,dskhongvay)
+        return danhsachvay
     return []
     
 
