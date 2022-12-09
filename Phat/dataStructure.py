@@ -452,7 +452,7 @@ def nodeLanCanNguocMau(pos, board):
 
             
             
-def dichuyen(player,oldpos, despos,board): 
+def dichuyenKhongAnQuan(player,oldpos, despos,board): 
     """Chỉ di chuyển nhưng không ăn quân"""   
     if kiemTraDiChuyenHopLe(player, oldpos, despos, board):
         newboard = copy.deepcopy(board)
@@ -493,12 +493,52 @@ def kiemtrabivaytatca(pos,board):
             return [False,[],nhomcungmau]
     return [True,nhomcungmau,[]]
 
+def kiemTraVayTai(checkpos, board):
+    danhsachkiemtra = nodeLanCanNguocMau(checkpos,board)
+    danhsachvay = []
+    danhsachkhongvay = []
+    for node in danhsachkiemtra:
+        if node in danhsachvay:
+            continue
+        if node in danhsachkhongvay:
+            continue
+        vay,dsvay,dskhongvay = kiemtrabivaytatca(node,board)
+        if vay:
+            danhsachvay = noikhongtrung(danhsachvay,dsvay)
+        else:
+            danhsachkhongvay = noikhongtrung(danhsachkhongvay,dskhongvay)
+    return danhsachvay
+
+
+# def coTheVay(player, move, board):
+#     """kiểm tra player di chuyển theo move có thể  vây hay không nếu có trả về danh sách vây"""
+#     oldpos,despos = move
+#     newboard, oldBoard = dichuyenKhongAnQuan(player,oldpos,despos,board)
+#     if newboard:
+#         danhsachkiemtra = nodeLanCanNguocMau(despos,newboard)
+#         danhsachvay = []
+#         danhsachkhongvay = []
+#         for node in danhsachkiemtra:
+#             if node in danhsachvay:
+#                 continue
+#             if node in danhsachkhongvay:
+#                 continue
+#             vay,dsvay,dskhongvay = kiemtrabivaytatca(node,newboard)
+#             if vay:
+#                 danhsachvay = noikhongtrung(danhsachvay,dsvay)
+#             else:
+#                 danhsachkhongvay = noikhongtrung(danhsachkhongvay,dskhongvay)
+#         return danhsachvay
+#     return []
+
+
 
 def coTheVay(player, move, board):
     """kiểm tra player di chuyển theo move có thể  vây hay không nếu có trả về danh sách vây"""
     oldpos,despos = move
-    newboard, oldBoard = dichuyen(player,oldpos,despos,board)
+    newboard, oldBoard = dichuyenKhongAnQuan(player,oldpos,despos,board)
     if newboard:
+        return kiemTraVayTai(despos, newboard)
         danhsachkiemtra = nodeLanCanNguocMau(despos,newboard)
         danhsachvay = []
         danhsachkhongvay = []
@@ -582,4 +622,14 @@ def coTheMo(prevboard, newboard):
                 movelist.append(mv)
     return movelist
         
+def dichuyen(player, move, startBoard):
+    """di chuyển và ăn quân khi player thực hiện move từ startboard"""
+    oldpos, despos = move
+    newboard, oldboard = dichuyenKhongAnQuan(player, oldpos, despos, startBoard)
+    if newboard is None:
+        return [newboard, oldboard]
+    danhsachganh = coTheGanh(player, despos, newboard);
+    
+    
+    
     
