@@ -167,59 +167,70 @@ class BoardManager:
 
 
 def hang(pos):
+    """lay ra tham so hang"""
     row = pos[0]
     if row < 0 or row > 4:
         return None
     return row
 
 def cot(pos):
+    """lay ra tham so cot"""    
     col = pos[1]
     if col < 0 or col > 4:
         return None
     return col
 
 def dilen(pos):
+    """ham tao ra vi tri khi quan di len"""
     if pos[0] <=0:
         return None
     return (pos[0]-1,pos[1])
 
 def dixuong(pos):
+    """ham tao ra vi tri khi quan di xuong"""    
     if pos[0] >=4:
         return None
     return (pos[0]+1,pos[1])
 
 def sangtrai(pos):
+    """ham tao ra vi tri khi quan di trai"""
     if pos[1] <=0:
         return None    
     return ( pos[0],pos[1]-1)
 
 def sangphai(pos):
+    """ham tao ra vi tri khi quan di phai"""
     if pos[1] >=4:
         return None
     return ( pos[0],pos[1]+1)
 
-
 def cheoLenTrai(pos):
+    """ham tao ra vi tri khi quan di cheo len trai"""
+    
     if pos[0] <=0 or pos[1] <=0:
         return None
     return (pos[0]-1, pos[1]-1 ) 
 
 def cheoLenPhai(pos):
+    """ham tao ra vi tri khi quan di cheo len phai"""    
     if pos[0] <= 0 or pos[1] >=4:
         return None
     return (pos[0]-1, pos[1]+1 ) 
 
 def cheoXuongTrai(pos):
+    """ham tao ra vi tri khi quan di cheo xuong trai"""
     if pos[0] >=4 or pos[1] <= 0:
         return None
     return (pos[0]+1, pos[1]-1 ) 
 
 def cheoXuongPhai(pos):
+    """ham tao ra vi tri khi quan di cheo xuong phai"""
     if pos[0] >= 4 or pos[1] >= 4:
         return None
     return (pos[0]+1, pos[1]+1 ) 
 
 def vitri(board, pos):
+    """lay ra gia tri cua quan co tai vi tri pos cua ban co board"""
     hang = pos[0]
     cot = pos[1]
     if (hang < 0) or (cot < 0) or (hang > 4) or (cot > 4):
@@ -227,23 +238,28 @@ def vitri(board, pos):
     return board[hang][cot]
 
 def setValAt(pos,value,broad):
+    """dat gia tri quan co cho vi tri pos cua ban co board"""
     h , c = pos
     broad[h][c] = value
     return broad
 
 def kiemTraOTrong(pos, board):
+    """kiem tra vi tri pos cua ban co board co trong hay khong"""
     return vitri(board, pos) == 0
 
 def phamViDiChuyen(pos):
+    """trả về phạm vi di chuyển hợp lệ của vị trí pos"""
     hang, cot = pos
     if (hang < 0) or (cot < 0) or (hang > 4) or (cot > 4):
         return []
     return MOVEGRAPH[hang][cot]
 
 def chonQuan(player,pos,board):
+    """kiểm tra xem player có thể chọn quân cờ tại vị trí pos của bàn cờ board hay không"""
     return player == vitri(board, pos)
 
 def kiemTraDiChuyenHopLe(player,originPos,desPos, board):
+    """kiem tra xem player có di chuyển hợp lệ hay không"""
     if chonQuan(player,originPos,board):
         if kiemTraOTrong(desPos, board):
             if desPos in phamViDiChuyen(originPos):
@@ -251,13 +267,6 @@ def kiemTraDiChuyenHopLe(player,originPos,desPos, board):
             return False        
         return False
     return False
-
-# def cotheden(originPos,desPos, board):
-#     if kiemTraOTrong(desPos, board):
-#         if desPos in phamViDiChuyen(originPos):
-#             return True
-#         return False        
-#     return False
 
 def flipAtomic(pos,board):
     giatri = vitri(board,pos)
@@ -303,17 +312,21 @@ def flip(flipPositions,board):
         
     
 def giuaHangNgang(pos):
+    """kiểm tra xem vi trí pos không nằm trên biên ngang"""
     c = cot(pos)
     return ( c > 0 and c < 4 )
 
 def giuaHangDoc(pos):
+    """kiểm tra xem vi trí pos không nằm trên biên dọc"""    
     h = hang(pos)
     return ( h > 0 and h < 4 )
 
 def giuaHangCheo(pos):
+    """kiểm tra xem vị trí pos có đi chéo được không"""
     return pos in DIEMDICHEO
     
 def coTheGanhNgang(player, pos, board):
+    """kiểm tra player tại vi trí pos có thể gánh ngang được không nếu có trả về danh sách"""
     ganh = []
     if giuaHangNgang(pos):
         t = sangtrai(pos)
@@ -326,6 +339,7 @@ def coTheGanhNgang(player, pos, board):
     return ganh
 
 def coTheGanhDoc(player, pos, board):
+    """kiểm tra player tại vi trí pos có thể gánh dọc được không nếu có trả về danh sách"""    
     ganh = []
     if giuaHangDoc(pos):
         t = dilen(pos)
@@ -338,6 +352,8 @@ def coTheGanhDoc(player, pos, board):
     return ganh
 
 def coTheGanhCheoTrai(player, pos, board):
+    """kiểm tra player tại vi trí pos có thể gánh chéo trái được không nếu có trả về danh sách"""    
+    
     ganh = []
     if giuaHangCheo(pos):
         lt = cheoLenTrai(pos)
@@ -350,6 +366,8 @@ def coTheGanhCheoTrai(player, pos, board):
     return ganh    
     
 def coTheGanhCheoPhai(player, pos, board):
+    """kiểm tra player tại vi trí pos có thể gánh chéo phải được không nếu có trả về danh sách"""    
+    
     ganh = []
     if giuaHangCheo(pos):
         lp = cheoLenPhai(pos) 
@@ -361,9 +379,8 @@ def coTheGanhCheoPhai(player, pos, board):
             ganh.append(xt)        
     return ganh
 
-        
-
 def coTheGanh(player, putpos, board):
+    """trả về danh sách gánh khi player đặt quân tại vị trí putpos của bảng board"""
     danhSachGanh = []
     
     cheongang = coTheGanhNgang(player,putpos,board)
@@ -392,8 +409,8 @@ def coTheGanh(player, putpos, board):
          
     return danhSachGanh
 
-
 def lanCanCoOtrong(pos,board):
+    """kiem tra xem lân cận có ô trong hay không"""
     phamvi = phamViDiChuyen(pos)
     for p in phamvi:
         if kiemTraOTrong(p, board):
@@ -401,6 +418,7 @@ def lanCanCoOtrong(pos,board):
     return False
 
 def oTrongXungQuanh(pos,board):
+    """trả về ô trống lân cận"""
     phamvi = phamViDiChuyen(pos)
     lst = []
     for p in phamvi:
@@ -409,6 +427,7 @@ def oTrongXungQuanh(pos,board):
     return lst
 
 def nodeLanCanCungMau(pos, board, notInList = []):
+    """trả về danh sách vị trí cùng màu lân cận không nằm trong notInList"""
     if kiemTraOTrong(pos,board):
         return []
     valpos = vitri(board, pos)
@@ -420,6 +439,7 @@ def nodeLanCanCungMau(pos, board, notInList = []):
     return nodelancan
 
 def nodeLanCanNguocMau(pos, board):
+    """trả về danh sách vị trí ngược màu lân cận"""
     valpos = vitri(board, pos)
     if valpos == BoardManager.PLAYER or valpos == BoardManager.OPPONENT:
         phamvi = phamViDiChuyen(pos)
@@ -432,7 +452,8 @@ def nodeLanCanNguocMau(pos, board):
 
             
             
-def dichuyen(player,oldpos, despos,board):    
+def dichuyen(player,oldpos, despos,board): 
+    """Di chuyen nhung khong doi mau khi co the an quan"""   
     if kiemTraDiChuyenHopLe(player, oldpos, despos, board):
         newboard = copy.deepcopy(board)
         setValAt(oldpos, 0, newboard)
@@ -490,7 +511,7 @@ def coTheVay(player, move, board):
                 danhsachkhongvay = noikhongtrung(danhsachkhongvay,dskhongvay)
         return danhsachvay
     return []
-    
+
 def getMoveFromBoards(prevboard, newboard):
     if prevboard == newboard:
         return [0,None,None]
@@ -498,28 +519,36 @@ def getMoveFromBoards(prevboard, newboard):
     for h in range(0,len(prevboard)):
         if prevboard[h] != newboard[h]:
             hanglist.append(h)
-    h1,h2 = hanglist
-    
-    poslist =[]  
-    for c in range(0, len(prevboard[h1])):
-        if prevboard[h1][c] != newboard[h1][c]:
-            pos1 = (h1,c)
-            poslist.append(pos1)
-    for c in range(0, len(prevboard[h2])):
-        if prevboard[h2][c] != newboard[h2][c]:
-            pos2 = (h2,c)
-            poslist.append(pos2)
-    moveLst = []
-    for p in poslist:
-        if kiemTraOTrong(p,newboard):
-            moveLst.insert(0,p)
+
+    changespos = []
+    if len(hanglist) == 1 :   # di chuyen ngang
+        h = hanglist[0]
+        for c in range(0,len(prevboard[h])):
+            if prevboard[h][c] != newboard[h][c]:
+                p = (h,c)
+                changespos.append(p)        
+    else:
+        h1, h2 = hanglist
+        for c in range(0,len(prevboard[h1])):
+            if prevboard[h1][c] != newboard[h1][c]:
+                p = (h1,c)
+                changespos.append(p)
+        for c in range(0,len(prevboard[h2])):
+            if prevboard[h2][c] != newboard[h2][c]:
+                p = (h2,c)
+                changespos.append(p)
+    movelist = []
+    for pos in changespos:
+        if kiemTraOTrong(pos,newboard):
+            movelist.insert(0,pos)
         else:
-            moveLst.append(p)
-            
-    val = vitri(newboard,moveLst[1])
-    moveLst.insert(0,val)
+            movelist.append(pos)
     
-    return moveLst
+    val = vitri(newboard,movelist[1])
+    movelist.insert(0,val)
+    return movelist
+                
+                
             
 
 def danhsachquancuanguoichoi(player,board):
@@ -538,16 +567,13 @@ def coTheMo(prevboard, newboard):
     opponent, oldpos, newpos = getMoveFromBoards(prevboard, newboard)
     player = -1*opponent
     movelist = []
-    listOtrong = oTrongXungQuanh(newpos,newboard)
     playerlst = danhsachquancuanguoichoi(player,newboard)
-    for otrong in listOtrong:
-        if coTheGanh(player,otrong,newboard):
-            diemcothexuatquan = phamViDiChuyen(otrong)
-            for p in playerlst:
-                if p in diemcothexuatquan: 
-                  m = (p,otrong)
-                  movelist.append(m)
-    
+    if coTheGanh(player,oldpos,newboard):
+        diemcothexuatquan = phamViDiChuyen(oldpos)
+        for playpos in playerlst:
+            if playpos in diemcothexuatquan:
+                mv = (playpos,oldpos)
+                movelist.append(mv)
     return movelist
         
     
