@@ -453,7 +453,7 @@ def nodeLanCanNguocMau(pos, board):
             
             
 def dichuyen(player,oldpos, despos,board): 
-    """Di chuyen nhung khong doi mau khi co the an quan"""   
+    """Chỉ di chuyển nhưng không ăn quân"""   
     if kiemTraDiChuyenHopLe(player, oldpos, despos, board):
         newboard = copy.deepcopy(board)
         setValAt(oldpos, 0, newboard)
@@ -463,6 +463,7 @@ def dichuyen(player,oldpos, despos,board):
         return [None,board]
 
 def getSameColorGraph(pos,board):
+    """lấy tất cả các vị trí cùng màu mà có thể đến được từ pos"""
     genlist = []
     genlist.append(pos)
     que = queue.Queue()
@@ -476,6 +477,7 @@ def getSameColorGraph(pos,board):
         
 
 def noikhongtrung(list1,list2):
+    """nối list nhưng loại phần tử lặp"""
     res = []
     [res.append(x) for x in list2 if x not in list1]
     res = list1 + res
