@@ -400,6 +400,14 @@ def lanCanCoOtrong(pos,board):
             return True
     return False
 
+def oTrongXungQuanh(pos,board):
+    phamvi = phamViDiChuyen(pos)
+    lst = []
+    for p in phamvi:
+        if kiemTraOTrong(p, board):
+            lst.append(p)
+    return lst
+
 def nodeLanCanCungMau(pos, board, notInList = []):
     if kiemTraOTrong(pos,board):
         return []
@@ -483,10 +491,66 @@ def coTheVay(player, move, board):
         return danhsachvay
     return []
     
+def getMoveFromBoards(prevboard, newboard):
+    if prevboard == newboard:
+        return [0,None,None]
+    hanglist = []
+    for h in range(0,len(prevboard)):
+        if prevboard[h] != newboard[h]:
+            hanglist.append(h)
+    h1,h2 = hanglist
+    
+    poslist =[]  
+    for c in range(0, len(prevboard[h1])):
+        if prevboard[h1][c] != newboard[h1][c]:
+            pos1 = (h1,c)
+            poslist.append(pos1)
+    for c in range(0, len(prevboard[h2])):
+        if prevboard[h2][c] != newboard[h2][c]:
+            pos2 = (h2,c)
+            poslist.append(pos2)
+    moveLst = []
+    for p in poslist:
+        if kiemTraOTrong(p,newboard):
+            moveLst.insert(0,p)
+        else:
+            moveLst.append(p)
+            
+    val = vitri(newboard,moveLst[1])
+    moveLst.insert(0,val)
+    
+    return moveLst
+            
 
+def danhsachquancuanguoichoi(player,board):
+    if player == 1 or player == -1 or player == 0:
+        lst = []
+        for h in range(0,5):
+            for c in range(0,5):
+                pos = (h,c)
+                if vitri(board,pos) == player:
+                    lst.append(pos)
+        
+        return lst
+    return []     
 
-def coTheMo(player, move, board):
-    pass
+def coTheMo(prevboard, newboard):
+    opponent, oldpos, newpos = getMoveFromBoards(prevboard, newboard)
+    player = -1*opponent
+    movelist = []
+    listOtrong = oTrongXungQuanh(newpos,newboard)
+    playerlst = danhsachquancuanguoichoi(player,newboard)
+    for otrong in listOtrong:
+        if coTheGanh(player,otrong,newboard):
+            diemcothexuatquan = phamViDiChuyen(otrong)
+            for p in playerlst:
+                if p in diemcothexuatquan: 
+                  m = (p,otrong)
+                  movelist.append(m)
+    
+    return movelist
+        
+    
 
 
 
