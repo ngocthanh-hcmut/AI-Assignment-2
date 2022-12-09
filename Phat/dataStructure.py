@@ -614,7 +614,13 @@ def dichuyen(player, move, startBoard):
     newboard, oldboard = dichuyenKhongAnQuan(player, oldpos, despos, startBoard)
     if newboard is None:
         return [newboard, oldboard]
-    danhsachganh = coTheGanh(player, despos, newboard);
+    danhsachvay = kiemTraVayTai(despos, newboard)
+    if danhsachvay:
+        newboard = flip(danhsachvay, newboard)[1]
+    danhsachganh = coTheGanh(player, despos, newboard)
+    if danhsachganh:
+        newboard = flip(danhsachganh, newboard)[1]
+    return [oldboard, newboard]
     
     
     
