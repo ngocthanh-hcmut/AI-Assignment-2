@@ -539,20 +539,6 @@ def coTheVay(player, move, board):
     newboard, oldBoard = dichuyenKhongAnQuan(player,oldpos,despos,board)
     if newboard:
         return kiemTraVayTai(despos, newboard)
-        danhsachkiemtra = nodeLanCanNguocMau(despos,newboard)
-        danhsachvay = []
-        danhsachkhongvay = []
-        for node in danhsachkiemtra:
-            if node in danhsachvay:
-                continue
-            if node in danhsachkhongvay:
-                continue
-            vay,dsvay,dskhongvay = kiemtrabivaytatca(node,newboard)
-            if vay:
-                danhsachvay = noikhongtrung(danhsachvay,dsvay)
-            else:
-                danhsachkhongvay = noikhongtrung(danhsachkhongvay,dskhongvay)
-        return danhsachvay
     return []
 
 def getMoveFromBoards(prevboard, newboard):
