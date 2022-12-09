@@ -484,7 +484,7 @@ def noikhongtrung(list1,list2):
     return res
         
 def kiemtrabivaytatca(pos,board):
-    """return [bi vay, danhsachvay, danhsachkhongbivay]"""
+    """return [bi vay, danhsachvay, danhsachkhongbivay] có bị vây hay không khi kiểm trả từ vị trí pos và trả về danh sách vây hay danh sách không vây"""
     if kiemTraOTrong(pos,board):
         return [False,None,None]
     nhomcungmau = getSameColorGraph(pos,board)
@@ -494,7 +494,8 @@ def kiemtrabivaytatca(pos,board):
     return [True,nhomcungmau,[]]
 
 
-def coTheVay(player, move, board):    
+def coTheVay(player, move, board):
+    """kiểm tra player di chuyển theo move có thể  vây hay không nếu có trả về danh sách vây"""
     oldpos,despos = move
     newboard, oldBoard = dichuyen(player,oldpos,despos,board)
     if newboard:
@@ -515,6 +516,7 @@ def coTheVay(player, move, board):
     return []
 
 def getMoveFromBoards(prevboard, newboard):
+    """lấy ra nước di chuyển từ bảng cũ chuyển sang bảng mới"""
     if prevboard == newboard:
         return [0,None,None]
     hanglist = []
@@ -554,6 +556,7 @@ def getMoveFromBoards(prevboard, newboard):
             
 
 def danhsachquancuanguoichoi(player,board):
+    """danh sách vị trí quân hiện tại của player trên bản cờ, có thể và vị trí của các ô trống."""
     if player == 1 or player == -1 or player == 0:
         lst = []
         for h in range(0,5):
@@ -566,6 +569,7 @@ def danhsachquancuanguoichoi(player,board):
     return []     
 
 def coTheMo(prevboard, newboard):
+    """trả về  danh sách các thế bẫy bắt buộc phải đi khi bảng cũ sang bảng mới"""
     opponent, oldpos, newpos = getMoveFromBoards(prevboard, newboard)
     player = -1*opponent
     movelist = []
@@ -579,25 +583,3 @@ def coTheMo(prevboard, newboard):
     return movelist
         
     
-
-
-
-# print(testingBoard)
-# p = (0, 1)
-# setValAt(p, 8, testingBoard)
-# print(testingBoard)
-# lst = [
-#     (0,0),
-#     (0,2),
-#     (4,4),
-#     (2,2),
-#     (3,0)
-# ]
-
-# print(testingBoard)
-# oldb , newb=flip(lst,testingBoard)
-# print(testingBoard)
-# print(oldb)
-# print(newb)
-
-
