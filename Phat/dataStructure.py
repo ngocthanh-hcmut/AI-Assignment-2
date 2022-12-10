@@ -483,8 +483,8 @@ def noikhongtrung(list1,list2):
     res = list1 + res
     return res
         
-def kiemtrabivaytatca(pos,board):
-    """return [bi vay, danhsachvay, danhsachkhongbivay] có bị vây hay không khi kiểm trả từ vị trí pos và trả về danh sách vây hay danh sách không vây"""
+def kiemTraVayTai(pos,board):
+    """return [bi vay, danhsachvay, danhsachkhongbivay] có bị vây hay không khi kiểm tra tại vị trí pos và trả về danh sách vây có chứa pos hay danh sách không vây có chứa pos"""
     if kiemTraOTrong(pos,board):
         return [False,None,None]
     nhomcungmau = getSameColorGraph(pos,board)
@@ -493,7 +493,8 @@ def kiemtrabivaytatca(pos,board):
             return [False,[],nhomcungmau]
     return [True,nhomcungmau,[]]
 
-def kiemTraVayTai(checkpos, board):
+def danhSachDoiThuBiVayXungQuanh(checkpos, board):
+    """trả về danh sách đối thủ bị vây xung quanh checkpos"""
     danhsachkiemtra = nodeLanCanNguocMau(checkpos,board)
     danhsachvay = []
     danhsachkhongvay = []
@@ -502,7 +503,7 @@ def kiemTraVayTai(checkpos, board):
             continue
         if node in danhsachkhongvay:
             continue
-        vay,dsvay,dskhongvay = kiemtrabivaytatca(node,board)
+        vay,dsvay,dskhongvay = kiemTraVayTai(node,board)
         if vay:
             danhsachvay = noikhongtrung(danhsachvay,dsvay)
         else:
@@ -523,7 +524,7 @@ def kiemTraVayTai(checkpos, board):
 #                 continue
 #             if node in danhsachkhongvay:
 #                 continue
-#             vay,dsvay,dskhongvay = kiemtrabivaytatca(node,newboard)
+#             vay,dsvay,dskhongvay = kiemTraVayTai(node,newboard)
 #             if vay:
 #                 danhsachvay = noikhongtrung(danhsachvay,dsvay)
 #             else:
@@ -538,7 +539,7 @@ def coTheVay(player, move, board):
     oldpos,despos = move
     newboard, oldBoard = dichuyenKhongAnQuan(player,oldpos,despos,board)
     if newboard:
-        return kiemTraVayTai(despos, newboard)
+        return danhSachDoiThuBiVayXungQuanh(despos, newboard)
     return []
 
 def getMoveFromBoards(prevboard, newboard):
@@ -614,13 +615,13 @@ def dichuyen(player, move, startBoard):
     newboard, oldboard = dichuyenKhongAnQuan(player, oldpos, despos, startBoard)
     if newboard is None:
         return [newboard, oldboard]
-    danhsachvay = kiemTraVayTai(despos, newboard)
+    danhsachvay = danhSachDoiThuBiVayXungQuanh(despos, newboard)
     if danhsachvay:
         newboard = flip(danhsachvay, newboard)[1]
     danhsachganh = coTheGanh(player, despos, newboard)
     if danhsachganh:
         newboard = flip(danhsachganh, newboard)[1]
-    return [oldboard, newboard]
+    return [newboard, oldboard]
     
     
     
