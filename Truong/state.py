@@ -1,10 +1,11 @@
-from concurrent.futures import ThreadPoolExecutor, wait, ALL_COMPLETED
+from concurrent.futures import ThreadPoolExecutor, as_completed, wait, ALL_COMPLETED, FIRST_COMPLETED
 from game import *
 from colored import fg
 import copy
 import threading
 
 game = Game()
+solutions = None
 
 class State:
     
@@ -12,16 +13,14 @@ class State:
     max_score = 0
     min_score = 16
     player = None
-    # executor = ThreadPoolExecutor()
-    badChoice = []
-    goodChoice = []
-    normalChoice = []
+    executor = ThreadPoolExecutor(max_workers=16)
+    generatedState = []
 
-    def __init__(self, oldBoard, currentBoard, player, depth, start=None, end=None, parent = None) -> None:
-        self.parent = parent
-        if parent == None:
-            State.player = player
+    def __init__(self, oldBoard, currentBoard, player, depth, start=None, end=None, realPlayer = None) -> None:
+        if realPlayer != None:
+            State.player = realPlayer
         self.board = currentBoard
+        self.oldBoard = oldBoard
         self.player = player
         self.score = 0
         self.depth = depth
@@ -29,8 +28,7 @@ class State:
         self.start = start
         self.end = end
         self.getScore()
-        self.generate(oldBoard, currentBoard)
-        # self.showChildren()
+        
 
     def getScore(self):
         for i in range(5):
@@ -43,9 +41,9 @@ class State:
             State.min_score = self.score
         return self.score
 
-    def generate(self, oldBoard, currentBoard):
+    def generate(self):
         if self.depth >= State.max_depth-1 or self.score == 0 or self.score == 16: return
-        oldPosition = Game.isTrapMove(oldBoard, currentBoard)
+        oldPosition = Game.isTrapMove(self.oldBoard, self.board)
         if oldPosition == False:
             self.generateChildren()
         else:
@@ -58,53 +56,65 @@ class State:
                 if Game.isEmpty(nearbyPos, self.board):
                     board = copy.deepcopy(self.board)
                     newBoard = Game.move(pos, nearbyPos, board)
-                    self.childrenList.append(State(board, newBoard, self.player*-1, self.depth+1, pos, nearbyPos, self))
+                    if (pos, nearbyPos, newBoard, self.player*-1) in self.generatedState:
+                        continue
+                    State.generatedState.append((pos, nearbyPos, newBoard, self.player*-1))
+                    self.childrenList.append(State(board, newBoard, self.player*-1, self.depth+1, pos, nearbyPos))
 
-    # def createChildren(self, startPosition, endPosition):
-    #     if Game.isEmpty(endPosition, self.board):
-    #         board = copy.deepcopy(self.board)
-    #         newBoard = Game.move(startPosition, endPosition, board)
-    #         self.childrenList.append(State(board, newBoard, self.player*-1, self.depth+1, startPosition, endPosition, self))
+        if self.depth == 0:
+            futures = [State.executor.submit(state.generate) for state in self.childrenList]
+            print("waiting")
+            done, notdone = wait(futures, return_when=ALL_COMPLETED)
+            print("done wait")
+        else:
+            threadList = [threading.Thread(target=state.generate) for state in self.childrenList]
+            for thread in threadList:
+                thread.start()
+            for thread in threadList:
+                thread.join()
 
     def generateTrapChildren(self, oldPosition):
-        # print("generating trap children")
-        # print("generating trap children")
-
         for pos in Game.getSurroundPosition(oldPosition):
             if Game.getValue(pos, self.board) == self.player:
                 board = copy.deepcopy(self.board)
                 newBoard = Game.move(pos, oldPosition, board)
-                self.childrenList.append(State(board, newBoard, self.player*-1, self.depth+1, pos, oldPosition, self))
-        return self.childrenList
+                if (pos, oldPosition, newBoard, self.player*-1) in State.generatedState:
+                    continue
+                self.childrenList.append(State(board, newBoard, self.player*-1, self.depth+1, pos, oldPosition))
+                State.generatedState.append((pos, oldPosition, newBoard, self.player*-1))
 
-    # def getGoodChoice(self):
-    #     # print("finding good choice")
-    #     if self.depth == 0:
-    #         for state in self.childrenList:
-    #             if state.getGoodChoice() and (state.start, state.end) not in State.badChoice:
-    #                 return (state.start, state.end)
-    #         for state in self.childrenList:
-    #             if (state.start, state.end) not in State.badChoice:
-    #                 return (state.start, state.end)
-    #         return State.badChoice[0]
-    #     else:
-    #         for state in self.childrenList:
-    #             if state.getGoodChoice():
-    #                 return True
-    #         if self.depth == State.max_depth-1 and self.score == State.max_score:
-    #             return True
-    #         return False
+        if self.depth == 0:
+            futures = [State.executor.submit(state.generate) for state in self.childrenList]
+            done, notdone = wait(futures, return_when=ALL_COMPLETED)
+        else:
+            threadList = [threading.Thread(target=state.generate) for state in self.childrenList]
+            for thread in threadList:
+                thread.start()
+            for thread in threadList:
+                thread.join()
 
     def getSolution(self):
         if self.depth == 0:
-            for state in self.childrenList:
-                solution = state.getSolution()
-                if "bad" in solution:
-                    self.badChoice.append((state.start, state.end))
-                if "good" in solution:
-                    self.goodChoice.append((state.start, state.end))
-                if "normal" in solution:
-                    self.normalChoice.append((state.start, state.end))
+            threadList = [threading.Thread(target=self.getSelection, args=(state,)) for state in self.childrenList]
+            
+            global solutions
+            solutions = []
+            for thread in threadList:
+                thread.start()
+            for thread in threadList:
+                thread.join()
+
+            for result in solutions:
+                if result[2] == "good":
+                    return result
+            for result in solutions:
+                if result[2] == "normal":
+                    return result
+            for result in solutions:
+                if result[2] == "bad":
+                    return result
+            return False
+
         else:
             solution = []
             if len(self.childrenList) != 0:
@@ -124,25 +134,17 @@ class State:
                 else:
                     return ["normal"]
 
-    # def getBadChoice(self):
-    #     # print("finding badchoice")
-    #     if self.depth == 0:
-    #         result = []
-    #         for state in self.childrenList:
-    #             if state.getBadChoice():
-    #                 State.badChoice.append((state.start, state.end))
-    #         return result
-    #     else:
-    #         for state in self.childrenList:
-    #             if state.getBadChoice():
-    #                 return True
-    #         if self.depth == State.max_depth and self.score == State.min_score:
-    #             return True
-    #         return False
-    
-    def showChildren(self):
-        for state in self.childrenList:
-            state.print()
+    def getSelection(self, firstState):
+        
+        # print("getting selection")
+        global solutions
+        solution = firstState.getSolution()
+        if "good" in solution and "bad" not in solution:
+            solutions.append( (firstState.start, firstState.end, "good"))
+        elif "normal" in solution and "bad" not in solution:
+            solutions.append( (firstState.start, firstState.end, "normal"))
+        else:
+            solutions.append( (firstState.start, firstState.end, 'bad'))
 
     def print(self):
         print('depth = ' + str(self.depth))

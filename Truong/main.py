@@ -1,29 +1,20 @@
 from game import Game
-from state import State
+from state import *
         
 game = Game()
 
 def move(old_board, current_board, player, remain_time_x, remain_time_y):
     State.max_score = 0
     State.min_score = 16
-    State.badChoice = []
-    State.goodChoice = []
-    State.normalChoice = []
-    stateTree = State(old_board, current_board, player, 0)
-    # print("maxscore = " + str(State.max_score))
-    stateTree.getSolution()
-    # print("good choice: "+str(State.goodChoice))
-    for move in State.goodChoice:
-        if move not in State.badChoice:
-            # print("have a good choice")
-            return move
-    for move in State.normalChoice:
-        if move not in State.badChoice:
-            # print("have a normal choice")
-            return move
-    if len(State.badChoice) != 0:
-        # print("have a bad choice")
-        return State.badChoice[0]
+    State.generatedState = []
+    stateTree = State(old_board, current_board, player, 0, realPlayer=player)
+    print("generating child")
+    stateTree.generate()
+    print("getting solution")
+    solution = stateTree.getSolution()
+    if solution:
+        print(solution[2])
+        return (solution[0], solution[1])
     else:
         return "huhu"
 
@@ -37,6 +28,13 @@ if __name__ == "__main__":
         [-1, 0, 0, 0,-1],
         [-1,-1,-1,-1,-1]
     ]
+    # currentBoard = [
+    #     [ 0, 1, 0,-1,-1],
+    #     [ 0, 0,-1,-1,-1],
+    #     [ 0, 0,-1, 0,-1],
+    #     [ 0,-1,-1,-1,-1],
+    #     [ 0, 1, 1, 1,-1]        
+    # ]
     Game.print(currentBoard)
     while running: 
         print("computer's turn:")
@@ -48,7 +46,7 @@ if __name__ == "__main__":
         oldBoard = currentBoard
         currentBoard = Game.move(aMove[0], aMove[1], oldBoard)
         if Game.isTrapMove(oldBoard, currentBoard):
-            print("Alert: trap move: ")
+            print(fg("red")+"Alert: trap move: "+fg('white'))
         Game.print(currentBoard)
         i,j,y,x = input("your turn: ").split()
         i = int(i)
@@ -60,6 +58,6 @@ if __name__ == "__main__":
         oldBoard = currentBoard
         currentBoard = Game.move((i,j), (y,x), oldBoard)
         if Game.isTrapMove(oldBoard, currentBoard):
-            print("Alert: trap move: ")
+            print(fg("red")+"Alert: trap move: "+fg('white'))
         Game.print(currentBoard)
 

@@ -109,14 +109,14 @@ class Game:
     @staticmethod
     def hasEnemyLeft(position, board, player):
         if not Game.hasLeftPath(position): return False
-        if Game.isEmpty(position, board): return False
+        # if Game.isEmpty(position, board): return False
         leftPosition = Game.getLeftPosition(position)
         return Game.isEnemy(leftPosition, player, board)
 
     @staticmethod
     def hasEnemyRight(position, board, player):
         if not Game.hasRightPath(position): return False
-        if Game.isEmpty(position, board): return False
+        # if Game.isEmpty(position, board): return False
         rightPosition = Game.getRightPosition(position)
         return Game.isEnemy(rightPosition, player, board)
 
