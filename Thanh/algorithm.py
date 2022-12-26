@@ -1,5 +1,5 @@
 from ds import *
-from copy import *
+import copy
 
 
 
@@ -27,8 +27,8 @@ def flip(board, dest, player, pieces): # ganh
             pieces.add(positions[i])
             pieces.add(positions[i+1])
 
-            board[x1][y1] == player
-            board[x2][y2] == player
+            board[x1][y1] = player
+            board[x2][y2] = player
 
     return result
 
@@ -42,6 +42,8 @@ def capture(board, dest, player, pieces): # vay
         for position in reachable_positions[player_piece[0]][player_piece[1]]:
             if board[position[0]][position[1]] == -player:
                 opponent_pieces.append(position)
+
+    # print(opponent_pieces)
 
     for piece in opponent_pieces:
         if not visited[piece[0]][piece[1]]:
@@ -64,7 +66,7 @@ def capture(board, dest, player, pieces): # vay
             if valid_moves == 0:
                 for captured_piece in visiting:
                     pieces.add(captured_piece)                    
-                    board[captured_piece[0]][captured_piece[1]] == player
+                    board[captured_piece[0]][captured_piece[1]] = player
 
 
 
@@ -72,30 +74,35 @@ def capture(board, dest, player, pieces): # vay
 def check_trap(prev_board, board, player): # bay
     forced_moves = []
 
-    changes = []
+    changed_positions = []
     for x in range(5):
         for y in range(5):
             if prev_board[x][y] != board[x][y]:
-                changes.append((x,y))
+                changed_positions.append((x,y))
     
-    if len(changes >= 3): return []
+    if len(changed_positions) >= 3: return []
 
-    prev_move = changes[0]
-    if board[changes[1][0]][changes[1][1]] == -player:
-        prev_move = changes[1]
+    prev_source = changed_positions[0]
+    if board[changed_positions[1][0]][changed_positions[1][1]] == 0:
+        prev_source = changed_positions[1]
 
-    traps = []
-    for position in trap_positions[prev_move[0]][prev_move[1]]:
-        x = (prev_move[0] + position[0])/2
-        y = (prev_move[1] + position[1])/2
 
-        if board[x][y] == 0:
-            traps.append((x,y))
+    prev_source_is_a_trap = False
+    positions = flippable_positions[prev_source[0]][prev_source[1]]
 
-    for dest in traps:
-        for src in reachable_positions[dest[0]][dest[1]]:
+    for i in range(0, len(positions), 2):
+        x1 = positions[i][0]
+        y1 = positions[i][1]
+        x2 = positions[i+1][0]
+        y2 = positions[i+1][1]
+        
+        if (board[x1][y1] == -player and board[x2][y2] == -player):
+            prev_source_is_a_trap = True
+
+    if prev_source_is_a_trap:
+        for src in reachable_positions[prev_source[0]][prev_source[1]]:
             if board[src[0]][src[1]] == player:
-                forced_moves.append(src, dest)
+                forced_moves.append((src, prev_source))
 
     return forced_moves
 
@@ -108,13 +115,12 @@ def get_valid_moves(prev_board, board, player, pieces):
         valid_moves = check_trap(prev_board, board, player)
 
     if not valid_moves:
-
         for src in pieces:
-            destinations = reachable_positions[src]
+            destinations = reachable_positions[src[0]][src[1]]
 
             for dest in destinations:
                 if board[dest[0]][dest[1]] == 0:
-                    valid_moves.append(src, dest)
+                    valid_moves.append((src, dest))
 
     return valid_moves
 
@@ -126,9 +132,9 @@ def act_move(board, move, player, pieces):
     
     dest = move[1]
     flipped_pieces = flip(board, dest, player, pieces)
-
-    dest.extend(flipped_pieces)
-    capture(board, dest, player, pieces)
+        
+    flipped_pieces.append(dest)
+    capture(board, flipped_pieces, player, pieces)
 
 
 
@@ -140,20 +146,21 @@ def minimax(prev_board, board, player, depth):
                 pieces.add((x,y))
 
     if depth == MAX_DEPTH:
-        return evaluate(pieces)
+        return (evaluate(pieces, board, player), None)
     
     valid_moves = get_valid_moves(prev_board, board, player, pieces)
     
     if not valid_moves:
-        return evaluate(pieces)
+        return (-16, None) # 16 is the maximum evaluation value
     
-    best_score = -100
+    best_score = -1000
     for move in valid_moves:
 
         next_board = copy.deepcopy(board)
         act_move(next_board, move, player, pieces)
         
         result = minimax(board, next_board, -player, depth + 1)
+
         new_value = -result[0]
         if new_value > best_score:
             best_score = new_value
@@ -163,5 +170,6 @@ def minimax(prev_board, board, player, depth):
             
         
 
-def evaluate(pieces):
-    return len(pieces)
+def evaluate(pieces, board, player):
+    result = len(pieces)
+    return result
