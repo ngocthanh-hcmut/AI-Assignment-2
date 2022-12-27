@@ -39,11 +39,21 @@ def printBoard(board):
             elif temp[x][y] == 1:
                 temp[x][y] = "O"
             elif temp[x][y] == 0:
-                temp[x][y] = "-"
+                temp[x][y] = "+"
 
-    for i in temp:
-        print('\t'.join(map(str, i)))
-        print()
+    print('')
+    print('    0   1   2   3   4')
+    print('')
+    print('0   ' +temp[0][0]+'---'+temp[0][1]+'---'+temp[0][2]+'---'+temp[0][3]+'---'+temp[0][4])
+    print('    '+'| \ | / | \ | / |')
+    print('1   '+temp[1][0]+'---'+temp[1][1]+'---'+temp[1][2]+'---'+temp[1][3]+'---'+temp[1][4])
+    print('    '+'| / | \ | / | \ |')
+    print('2   '+temp[2][0]+'---'+temp[2][1]+'---'+temp[2][2]+'---'+temp[2][3]+'---'+temp[2][4])
+    print('    '+'| \ | / | \ | / |')
+    print('3   '+temp[3][0]+'---'+temp[3][1]+'---'+temp[3][2]+'---'+temp[3][3]+'---'+temp[3][4])
+    print('    '+'| / | \ | / | \ |')
+    print('4   '+temp[4][0]+'---'+temp[4][1]+'---'+temp[4][2]+'---'+temp[4][3]+'---'+temp[4][4])
+    print('')
 
 def inputMove(): pass
 
@@ -58,19 +68,16 @@ def play():
     temp_pieces = set()
     step = 0
     while True:
-        print(step)
+        # print("Step = ", step)
 
-        # print("Your move:")
-        # input_move = list(map(int, input().split()))
-        # src_x = input_move[0]
-        # src_y = input_move[1]
-        # dest_x = input_move[2]
-        # dest_y = input_move[3]
-        # human_move = ((src_x, src_y), (dest_x, dest_y))
+        input_move = list(map(int, input("Your move: ").split()))
+        src_x = input_move[0]
+        src_y = input_move[1]
+        dest_x = input_move[2]
+        dest_y = input_move[3]
+        human_move = ((src_x, src_y), (dest_x, dest_y))
 
-        human_move = random_move(prev_board, board, -1)
-
-        # human_move = move(prev_board, board, -1, 999, 999, 2)
+        # human_move = random_move(prev_board, board, -1)
 
 
         prev_board = copy.deepcopy(board)
@@ -80,7 +87,7 @@ def play():
         printBoard(board)
         if end_game(board): return
 
-        machine_move = move(prev_board, board, 1, 999, 999, 3)
+        machine_move = move(prev_board, board, 1, 999, 999)
 
         act_move(board, machine_move, 1, temp_pieces)
         print("After machine move:")
