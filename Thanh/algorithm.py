@@ -3,8 +3,8 @@ import copy
 
 
 
-def move(prev_board, board, player, remain_time_x, remain_time_o, max_depth):
-    (best_score, best_move) = minimax(prev_board, board, player, 0, max_depth)
+def move(prev_board, board, player, remain_time_x, remain_time_o):
+    (best_score, best_move) = minimax(prev_board, board, player, 0)
     return best_move
 
 
@@ -138,14 +138,14 @@ def act_move(board, move, player, pieces):
 
 
 
-def minimax(prev_board, board, player, depth, max_depth):
+def minimax(prev_board, board, player, depth):
     pieces = set()
     for x in range(5):
         for y in range(5):
             if board[x][y] == player:
                 pieces.add((x,y))
 
-    if depth == max_depth:
+    if depth == MAX_DEPTH:
         return (evaluate(pieces, board, player), None)
     
     valid_moves = get_valid_moves(prev_board, board, player, pieces)
@@ -159,7 +159,7 @@ def minimax(prev_board, board, player, depth, max_depth):
         next_board = copy.deepcopy(board)
         act_move(next_board, move, player, pieces)
         
-        result = minimax(board, next_board, -player, depth + 1, max_depth)
+        result = minimax(board, next_board, -player, depth + 1)
 
         new_value = -result[0]
         if new_value > best_score:
