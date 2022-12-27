@@ -1,6 +1,8 @@
 from algorithm import *
 import copy
 import random
+from colored import *
+
 
 def random_move(prev_board, board, player):
     pieces = []
@@ -35,25 +37,25 @@ def printBoard(board):
     for x in range(5):
         for y in range(5):
             if temp[x][y] == -1:
-                temp[x][y] = "X"
+                temp[x][y] = fg("yellow") + "X"
             elif temp[x][y] == 1:
-                temp[x][y] = "O"
+                temp[x][y] = fg("red") + "O"
             elif temp[x][y] == 0:
-                temp[x][y] = "+"
+                temp[x][y] = fg("white") + "+"
 
     print('')
     print('    0   1   2   3   4')
     print('')
-    print('0   ' +temp[0][0]+'---'+temp[0][1]+'---'+temp[0][2]+'---'+temp[0][3]+'---'+temp[0][4])
-    print('    '+'| \ | / | \ | / |')
-    print('1   '+temp[1][0]+'---'+temp[1][1]+'---'+temp[1][2]+'---'+temp[1][3]+'---'+temp[1][4])
-    print('    '+'| / | \ | / | \ |')
-    print('2   '+temp[2][0]+'---'+temp[2][1]+'---'+temp[2][2]+'---'+temp[2][3]+'---'+temp[2][4])
-    print('    '+'| \ | / | \ | / |')
-    print('3   '+temp[3][0]+'---'+temp[3][1]+'---'+temp[3][2]+'---'+temp[3][3]+'---'+temp[3][4])
-    print('    '+'| / | \ | / | \ |')
-    print('4   '+temp[4][0]+'---'+temp[4][1]+'---'+temp[4][2]+'---'+temp[4][3]+'---'+temp[4][4])
-    print('')
+    print('0   ' + temp[0][0] + fg("white") +  '---'+temp[0][1] + fg("white") + '---' + temp[0][2] + fg("white") + '---'+  temp[0][3] + fg("white") + '---'+ temp[0][4])
+    print('    '+fg("white") + '| \ | / | \ | / |' )
+    print('1   '+ temp[1][0]+fg("white") + '---'+temp[1][1]+fg("white") + '---'+temp[1][2]+fg("white") + '---'+temp[1][3]+fg("white") + '---'+temp[1][4])
+    print('    '+fg("white") + '| / | \ | / | \ |' )
+    print('2   '+ temp[2][0]+fg("white") + '---'+temp[2][1]+fg("white") + '---'+temp[2][2]+fg("white") + '---'+temp[2][3]+fg("white") + '---'+temp[2][4])
+    print('    '+fg("white") + '| \ | / | \ | / |' )
+    print('3   '+ temp[3][0]+fg("white") + '---'+ temp[3][1]+fg("white") + '---'+temp[3][2]+fg("white") + '---'+temp[3][3]+fg("white") + '---'+temp[3][4])
+    print('    '+fg("white") + '| / | \ | / | \ |' )
+    print('4   '+ temp[4][0]+fg("white") + '---'+ temp[4][1]+fg("white") + '---'+temp[4][2]+fg("white") + '---'+ temp[4][3]+fg("white") + '---'+temp[4][4])
+    print(fg("white") + '' )
 
 def inputMove(): pass
 
@@ -90,9 +92,11 @@ def play():
         machine_move = move(prev_board, board, 1, 999, 999)
 
         act_move(board, machine_move, 1, temp_pieces)
+
         print("After machine move:")
         printBoard(board)
         if end_game(board): return
+
 
         step += 1
 

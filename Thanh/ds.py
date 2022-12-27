@@ -15,4 +15,4 @@ flippable_positions =  (
                         ((), ((4,0), (4,2)), ((4,1), (4,3)), ((4,2), (4,4)), ())
                        )
 
-MAX_DEPTH = 3
+MAX_DEPTH = 5
