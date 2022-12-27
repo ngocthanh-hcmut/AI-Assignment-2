@@ -9,7 +9,7 @@ solutions = None
 
 class State:
     
-    max_depth = 4
+    max_depth = 3
     max_score = 0
     min_score = 16
     player = None
@@ -67,11 +67,13 @@ class State:
             done, notdone = wait(futures, return_when=ALL_COMPLETED)
             print("done wait")
         else:
-            threadList = [threading.Thread(target=state.generate) for state in self.childrenList]
-            for thread in threadList:
-                thread.start()
-            for thread in threadList:
-                thread.join()
+            # threadList = [threading.Thread(target=state.generate) for state in self.childrenList]
+            # for thread in threadList:
+            #     thread.start()
+            # for thread in threadList:
+            #     thread.join()
+            for state in self.childrenList:
+                state.generate()
 
     def generateTrapChildren(self, oldPosition):
         for pos in Game.getSurroundPosition(oldPosition):
@@ -87,11 +89,8 @@ class State:
             futures = [State.executor.submit(state.generate) for state in self.childrenList]
             done, notdone = wait(futures, return_when=ALL_COMPLETED)
         else:
-            threadList = [threading.Thread(target=state.generate) for state in self.childrenList]
-            for thread in threadList:
-                thread.start()
-            for thread in threadList:
-                thread.join()
+            for state in self.childrenList:
+                state.generate()
 
     def getSolution(self):
         if self.depth == 0:

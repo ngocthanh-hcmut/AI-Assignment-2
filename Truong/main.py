@@ -3,11 +3,11 @@ from state import *
         
 game = Game()
 
-def move(old_board, current_board, player, remain_time_x, remain_time_y):
+def move(prev_board, current_board, player, remain_time_x, remain_time_y):
     State.max_score = 0
     State.min_score = 16
     State.generatedState = []
-    stateTree = State(old_board, current_board, player, 0, realPlayer=player)
+    stateTree = State(prev_board, current_board, player, 0, realPlayer=player)
     print("generating child")
     stateTree.generate()
     print("getting solution")
