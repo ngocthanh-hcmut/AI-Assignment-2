@@ -98,7 +98,7 @@ def play():
         prev_board2 = copy.deepcopy(board)
         act_move(board, machine_move, 1, temp_pieces)
 
-        print("After machine move:")
+        print("After machine move: ", machine_move[0], " --> ", machine_move[1])
         printBoard(board)
         if end_game(board): 
             # print("Step = ", step)
