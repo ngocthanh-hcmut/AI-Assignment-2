@@ -37,7 +37,7 @@ def printBoard(board):
 
 prev_board = None
 
-board = [[1, 1, 1, 1, 1], [1, 0, 0, 0, 1], [1, 0, 0, 0, -1], [-1, 0, 0, 0, -1], [-1, -1, -1, -1, -1]]
+board = [[1, 1, 1, 1, 1], [1, 0, 0, 0, 1], [1, 0, 1, 1, 1], [1, 1, 0, 1, 1], [0, 0, -1, 1, 0]]
 
 printBoard(board)
 
@@ -47,4 +47,4 @@ for x in range(5):
         if board[x][y] == 1:
             pieces.append((x,y))
 
-print(get_valid_moves(prev_board, board, 1, pieces))
+print(evaluate(pieces, board, 1))

@@ -3,13 +3,13 @@ import copy
 
 
 
-def move(prev_board, board, player, remain_time_x, remain_time_o):
-    (best_score, best_move) = minimax(prev_board, board, player, 0)
+def bad_machine_move(prev_board, board, player, remain_time_x, remain_time_o):
+    (best_score, best_move) = bad_machine_minimax(prev_board, board, player, 0)
     return best_move
 
 
 
-def flip(board, dest, player, pieces): # ganh
+def bad_machine_flip(board, dest, player, pieces): # ganh
     result = []
 
     positions = flippable_positions[dest[0]][dest[1]]
@@ -34,7 +34,7 @@ def flip(board, dest, player, pieces): # ganh
 
 
 
-def capture(board, dest, player, pieces): # vay
+def bad_machine_capture(board, dest, player, pieces): # vay
     visited = [[False for i in range(5)] for j in range(5)]
 
     opponent_pieces = []
@@ -71,7 +71,7 @@ def capture(board, dest, player, pieces): # vay
 
 
 # A move is called a trap when it: 1) Don't flip any opponent pieces and 2) Create a flippable position for opponent. When a trap is made, you must go into it.
-def check_trap(prev_board, board, player): # bay
+def bad_machine_check_trap(prev_board, board, player): # bay
     forced_moves = []
 
     changed_positions = []
@@ -108,11 +108,11 @@ def check_trap(prev_board, board, player): # bay
 
 
 
-def get_valid_moves(prev_board, board, player, pieces):
+def bad_machine_get_valid_moves(prev_board, board, player, pieces):
     valid_moves = []
     
     if prev_board:
-        valid_moves = check_trap(prev_board, board, player)
+        valid_moves = bad_machine_check_trap(prev_board, board, player)
 
     if not valid_moves:
         for src in pieces:
@@ -126,42 +126,42 @@ def get_valid_moves(prev_board, board, player, pieces):
 
 
 
-def act_move(board, move, player, pieces):
+def bad_machine_act_move(board, move, player, pieces):
     board[move[0][0]][move[0][1]] = 0
     board[move[1][0]][move[1][1]] = player
     
     dest = move[1]
-    flipped_pieces = flip(board, dest, player, pieces)
+    flipped_pieces = bad_machine_flip(board, dest, player, pieces)
         
     flipped_pieces.append(dest)
-    capture(board, flipped_pieces, player, pieces)
+    bad_machine_capture(board, flipped_pieces, player, pieces)
 
 
 
-def minimax(prev_board, board, player, depth):
+def bad_machine_minimax(prev_board, board, player, depth):
     pieces = set()
     for x in range(5):
         for y in range(5):
             if board[x][y] == player:
                 pieces.add((x,y))
 
-    if depth == MAX_DEPTH:
-        return (evaluate(pieces, prev_board, board, player)/depth, None)
+    if depth == 3:
+        return (bad_machine_evaluate(pieces, prev_board, board, player), None)
     
-    valid_moves = get_valid_moves(prev_board, board, player, pieces)
+    valid_moves = bad_machine_get_valid_moves(prev_board, board, player, pieces)
     
     if not valid_moves:
-        return (evaluate(pieces, prev_board, board, player)/depth, None)
-
-    best_score = -999
+        return (bad_machine_evaluate(pieces, prev_board, board, player), None)
+        
+    best_score = -99999
     best_move = None
 
     for move in valid_moves:
 
         next_board = copy.deepcopy(board)
-        act_move(next_board, move, player, pieces)
+        bad_machine_act_move(next_board, move, player, pieces)
         
-        result = minimax(board, next_board, -player, depth+1)
+        result = bad_machine_minimax(board, next_board, -player, depth+1)
 
         new_value = -result[0]
         if new_value > best_score:
@@ -172,55 +172,5 @@ def minimax(prev_board, board, player, depth):
             
         
 
-def evaluate(pieces, prev_board, board, player):
-    if len(pieces) == 16:
-        return 999
-    elif len(pieces) == 0:
-        return -999
-
-    opponent_pieces = []
-    for x in range(5):
-        for y in range(5):
-            if board[x][y] == -player:
-                opponent_pieces.append((x,y))
-
-    opponent_valid_moves = get_valid_moves(prev_board, board, -player, opponent_pieces)
-
-    # visited = [[False for i in range(5)] for j in range(5)]
-
-    # opponent_vision = 0
-    # while opponent_pieces:
-    #     current = opponent_pieces.pop()
-        
-    #     for neighbor in reachable_positions[current[0]][current[1]]:
-    #         if board[neighbor[0]][neighbor[1]] == 0 and visited[neighbor[0]][neighbor[1]] == False:
-    #             visited[neighbor[0]][neighbor[1]] = True
-    #             opponent_pieces.append(neighbor)
-    #             opponent_vision += 1
-
-    return len(pieces) - len(opponent_valid_moves)
-
-
-
-
-    # opponent_pieces = []
-    # for x in range(5):
-    #     for y in range(5):
-    #         if board[x][y] == -player:
-    #             opponent_pieces.append((x,y))
-
-    # opponent_valid_moves = get_valid_moves(prev_board, board, -player, opponent_pieces)
-
-    # visited = [[False for i in range(5)] for j in range(5)]
-
-    # opponent_vision = 0
-    # while opponent_pieces:
-    #     current = opponent_pieces.pop()
-        
-    #     for neighbor in reachable_positions[current[0]][current[1]]:
-    #         if board[neighbor[0]][neighbor[1]] == 0 and visited[neighbor[0]][neighbor[1]] == False:
-    #             visited[neighbor[0]][neighbor[1]] = True
-    #             opponent_pieces.append(neighbor)
-    #             opponent_vision += 1
-
-    # return len(pieces)*3 - opponent_vision
+def bad_machine_evaluate(pieces, prev_board, board, player):
+    return len(pieces)

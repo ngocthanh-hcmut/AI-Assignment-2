@@ -1,4 +1,5 @@
 from algorithm import *
+from Thanh.bad_machine import *
 import copy
 import random
 from colored import *
@@ -69,8 +70,7 @@ def play():
 
     temp_pieces = set()
     step = 0
-    while True:
-        # print("Step = ", step)
+    while step < 50:
 
         input_move = list(map(int, input("Your move: ").split()))
         src_x = input_move[0]
@@ -79,7 +79,9 @@ def play():
         dest_y = input_move[3]
         human_move = ((src_x, src_y), (dest_x, dest_y))
 
-        # human_move = random_move(prev_board, board, -1)
+        # bad_machine = random_move(prev_board, board, -1)
+
+        # bad_machine = bad_machine_move(prev_board, board, -1, 999, 999)
 
 
         prev_board = copy.deepcopy(board)
@@ -87,7 +89,9 @@ def play():
 
         print("After your move:")
         printBoard(board)
-        if end_game(board): return
+        if end_game(board): 
+            # print("Step = ", step)
+            return
 
         machine_move = move(prev_board, board, 1, 999, 999)
 
@@ -95,10 +99,13 @@ def play():
 
         print("After machine move:")
         printBoard(board)
-        if end_game(board): return
+        if end_game(board): 
+            # print("Step = ", step)
+            return
 
 
         step += 1
+        print("Step = ", step)
 
 
 
