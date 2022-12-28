@@ -1,5 +1,5 @@
 from algorithm import *
-from Thanh.bad_machine import *
+from bad_machine import *
 import copy
 import random
 from colored import *
