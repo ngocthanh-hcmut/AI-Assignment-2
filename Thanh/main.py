@@ -77,15 +77,15 @@ def play():
         src_y = input_move[1]
         dest_x = input_move[2]
         dest_y = input_move[3]
-        human_move = ((src_x, src_y), (dest_x, dest_y))
+        x_move = ((src_x, src_y), (dest_x, dest_y))
 
-        # bad_machine = random_move(prev_board, board, -1)
+        # x_move = random_move(prev_board, board, -1)
 
-        # bad_machine = bad_machine_move(prev_board, board, -1, 999, 999)
+        # x_move = bad_machine_move(prev_board, board, -1, 999, 999)
 
 
         prev_board = copy.deepcopy(board)
-        act_move(board, human_move, -1, temp_pieces)
+        act_move(board, x_move, -1, temp_pieces)
 
         print("After your move:")
         printBoard(board)
@@ -95,6 +95,7 @@ def play():
 
         machine_move = move(prev_board, board, 1, 999, 999)
 
+        prev_board2 = copy.deepcopy(board)
         act_move(board, machine_move, 1, temp_pieces)
 
         print("After machine move:")
@@ -102,6 +103,13 @@ def play():
         if end_game(board): 
             # print("Step = ", step)
             return
+
+        traps = check_trap(prev_board2, board, -1)
+        
+        if traps:
+            print("Cac nuoc di bay:")
+            for trap in traps:
+                print(trap[0]," --> ",trap[1])
 
 
         step += 1

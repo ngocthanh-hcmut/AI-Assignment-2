@@ -198,7 +198,7 @@ def evaluate(pieces, prev_board, board, player):
     #             opponent_pieces.append(neighbor)
     #             opponent_vision += 1
 
-    return len(pieces) - len(opponent_valid_moves)
+    return len(pieces)*3 - len(opponent_valid_moves)
 
 
 
